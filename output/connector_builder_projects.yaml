@@ -1,0 +1,585 @@
+openapi: 3.0.0
+info:
+  title: Connector builder projects API
+  version: 1.0.0
+paths:
+  /v1/connector_builder_projects/create:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Create new connector builder project
+      operationId: createConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectWithWorkspaceId'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectIdWithWorkspaceId'
+  /v1/connector_builder_projects/publish:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Publish a connector to the workspace
+      operationId: publishConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderPublishRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionIdBody'
+  /v1/connector_builder_projects/get_base_image:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Get the base image for the declarative manifest
+      operationId: getDeclarativeManifestBaseImage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclarativeManifestRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeclarativeManifestBaseImageRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/connector_builder_projects/update:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Update connector builder project
+      operationId: updateConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExistingConnectorBuilderProjectWithWorkspaceId'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+  /v1/connector_builder_projects/delete:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Deletes connector builder project
+      operationId: deleteConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectIdWithWorkspaceId'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+  /v1/connector_builder_projects/list:
+    post:
+      tags:
+      - connector_builder_project
+      summary: List connector builder projects for workspace
+      operationId: listConnectorBuilderProjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectReadList'
+  /v1/connector_builder_projects/get_with_manifest:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Get a connector builder project with draft manifest
+      operationId: getConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectIdWithWorkspaceId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectRead'
+  /v1/connector_builder_projects/get_for_definition_id:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Get a connector builder project by source definition ID
+      operationId: getConnectorBuilderProjectIdForDefinitionId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuilderProjectForDefinitionRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuilderProjectForDefinitionResponse'
+  /v1/connector_builder_projects/update_testing_values:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Submit a set of testing values to persist for a connector builder project
+      operationId: updateConnectorBuilderProjectTestingValues
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectTestingValuesUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+  /v1/connector_builder_projects/read_stream:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Reads the target stream of the connector builder project using the
+        persisted testing values
+      operationId: readConnectorBuilderProjectStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectStreamReadRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectStreamRead'
+  /v1/connector_builder_projects/fork:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Creates a new builder project that is a fork of an existing source
+        definition
+      operationId: createForkedConnectorBuilderProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorBuilderProjectForkRequestBody'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorBuilderProjectIdWithWorkspaceId'
+  /v1/connector_builder_projects/get_oauth_consent_url:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Given a connector builder project ID, return the URL to the consent
+        screen where to redirect the user to.
+      operationId: getConnectorBuilderProjectOAuthConsent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuilderProjectOauthConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthConsentRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connector_builder_projects/complete_oauth:
+    post:
+      tags:
+      - connector_builder_project
+      summary: Given a builder project Id generate an access/refresh token etc.
+      operationId: completeConnectorBuilderProjectOauth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteConnectorBuilderProjectOauthRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteOAuthResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    BuilderProjectForDefinitionRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      - workspaceId
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    BuilderProjectForDefinitionResponse:
+      type: object
+      required:
+      - builderProjectId
+      properties:
+        builderProjectId:
+          type: string
+          format: uuid
+          nullable: true
+    BuilderProjectOauthConsentRequest:
+      type: object
+      required:
+      - builderProjectId
+      - workspaceId
+      - redirectUrl
+      properties:
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+    CompleteConnectorBuilderProjectOauthRequest:
+      type: object
+      required:
+      - builderProjectId
+      - workspaceId
+      properties:
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+    ConnectorBuilderProjectForkRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - baseActorDefinitionId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        baseActorDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    ConnectorBuilderProjectIdWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        version:
+          $ref: '#/components/schemas/ManifestVersion'
+    ConnectorBuilderProjectRead:
+      type: object
+      required:
+      - builderProject
+      properties:
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetailsRead'
+        declarativeManifest:
+          $ref: '#/components/schemas/DeclarativeManifestRead'
+        testingValues:
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectReadList:
+      type: object
+      required:
+      - projects
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorBuilderProjectDetailsRead'
+    ConnectorBuilderProjectStreamRead:
+      type: object
+      required:
+      - logs
+      - slices
+      - test_read_limit_reached
+      properties:
+        logs:
+          type: array
+          description: The LOG AirbyteMessages that were emitted during the read of
+            this slice
+          items:
+            type: object
+            required:
+            - message
+            - level
+            properties:
+              message:
+                type: string
+              level:
+                type: string
+                enum:
+                - INFO
+                - WARN
+                - ERROR
+                - FATAL
+              internal_message:
+                type: string
+              stacktrace:
+                type: string
+        slices:
+          type: array
+          description: The stream slices returned from the read command. If no stream
+            slicer is configured, this should contain a single item containing all
+            of the results.
+          items:
+            type: object
+            required:
+            - pages
+            properties:
+              pages:
+                type: array
+                description: The pages returned from the read command. If no pagination
+                  is configured, this should contain a single item containing all
+                  of the results.
+                items:
+                  type: object
+                  required:
+                  - records
+                  properties:
+                    records:
+                      type: array
+                      description: The RECORD AirbyteMessages coming from the read
+                        operation for this page
+                      items:
+                        type: object
+                    request:
+                      $ref: '#/components/schemas/ConnectorBuilderHttpRequest'
+                    response:
+                      $ref: '#/components/schemas/ConnectorBuilderHttpResponse'
+              slice_descriptor:
+                type: object
+                description: An object describing the current slice. This can be omitted
+                  if a stream slicer is not configured.
+              state:
+                type: array
+                items:
+                  type: object
+                  description: The STATE AirbyteMessage emitted at the end of this
+                    slice. This can be omitted if a stream slicer is not configured.
+              auxiliary_requests:
+                type: array
+                description: Non-data requests made at the slice level, e.g. creation
+                  / polling requests for async stream slices
+                items:
+                  $ref: '#/components/schemas/ConnectorBuilderAuxiliaryRequest'
+        test_read_limit_reached:
+          type: boolean
+          description: Whether the maximum number of request per slice or the maximum
+            number of slices queried has been reached
+        auxiliary_requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorBuilderAuxiliaryRequest'
+        inferred_schema:
+          type: object
+          description: The narrowest JSON Schema against which every AirbyteRecord
+            in the slices can validate successfully. This is inferred from reading
+            every record in the output slices.
+        inferred_datetime_formats:
+          type: object
+          description: Fields that match the given datetime format in every encountered
+            record. The property names are the fields, the property values are the
+            datetime formats.
+        latest_config_update:
+          description: The latest configuration emitted by the platform. The connector
+            builder uses this to update its state when a new configuration is generated,
+            to ensure that the user always work with the latest configuration.
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectStreamReadRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - manifest
+      - streamName
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        manifest:
+          $ref: '#/components/schemas/DeclarativeManifest'
+        streamName:
+          type: string
+          description: Name of the stream to read
+        formGeneratedManifest:
+          type: boolean
+          description: Indicates if the manifest was auto-generated from the form-based
+            Connector Builder UI
+          default: false
+        recordLimit:
+          type: integer
+          default: 1000
+          minimum: 1
+          maximum: 10000
+          description: Maximum number of records that will be returned to the client
+            from connector builder test reads
+        pageLimit:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
+          description: Maximum number of pages that will be returned to the client
+            from connector builder test reads
+        sliceLimit:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
+          description: Maximum number of slices that will be returned to the client
+            from connector builder test reads
+        state:
+          type: array
+          items:
+            type: object
+            description: The AirbyteStateMessage object to use as the starting state
+              for this read
+    ConnectorBuilderProjectTestingValues:
+      type: object
+      description: The config blob containing the user inputs for testing
+    ConnectorBuilderProjectTestingValuesUpdate:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - spec
+      - testingValues
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        spec:
+          $ref: '#/components/schemas/SourceDefinitionSpecification'
+        testingValues:
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProject
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetails'
+    ConnectorBuilderPublishRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - name
+      - initialDeclarativeManifest
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        name:
+          type: string
+        initialDeclarativeManifest:
+          $ref: '#/components/schemas/DeclarativeSourceManifest'
+        componentsFileContent:
+          type: string
+    DeclarativeManifestBaseImageRead:
+      description: Base image associated with a declarative manifest
+      type: object
+      properties:
+        baseImage:
+          type: string
+    DeclarativeManifestRequestBody:
+      type: object
+      required:
+      - manifest
+      properties:
+        manifest:
+          $ref: '#/components/schemas/DeclarativeManifest'
+    ExistingConnectorBuilderProjectWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - builderProject
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetails'
+    SourceDefinitionIdBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+  responses: {}

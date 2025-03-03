@@ -1,0 +1,5714 @@
+openapi: 3.0.0
+info:
+  title: common API
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ConnectionIdRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    ListResourcesForWorkspacesRequestBody:
+      type: object
+      required:
+      - workspaceIds
+      - pagination
+      properties:
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+        includeDeleted:
+          type: boolean
+          default: false
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    ListWorkspacesByUserRequestBody:
+      type: object
+      required:
+      - userId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    ListWorkspacesInOrganizationRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    SlugRequestBody:
+      type: object
+      required:
+      - slug
+      properties:
+        slug:
+          type: string
+    WorkspaceCreate:
+      type: object
+      required:
+      - name
+      - organizationId
+      properties:
+        email:
+          type: string
+          format: email
+        anonymousDataCollection:
+          type: boolean
+        name:
+          type: string
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        displaySetupWizard:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceCreateWithId:
+      type: object
+      required:
+      - id
+      - name
+      - organizationId
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        anonymousDataCollection:
+          type: boolean
+        name:
+          type: string
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        displaySetupWizard:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceGiveFeedback:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    WorkspaceIdRequestBody:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        includeTombstone:
+          type: boolean
+    WorkspaceOrganizationInfoRead:
+      type: object
+      description: Limited info about a workspace's organization that is safe to expose
+        to workspace readers who are not members of the org.
+      required:
+      - organizationId
+      - organizationName
+      - sso
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        sso:
+          type: boolean
+        billing:
+          type: object
+          required:
+          - paymentStatus
+          properties:
+            subscriptionStatus:
+              type: string
+              enum:
+              - pre_subscription
+              - unsubscribed
+              - subscribed
+            paymentStatus:
+              type: string
+              enum:
+              - uninitialized
+              - okay
+              - grace_period
+              - disabled
+              - locked
+              - manual
+            accountType:
+              type: string
+              enum:
+              - free
+              - internal
+            gracePeriodEndsAt:
+              type: integer
+              format: int64
+    WorkspaceRead:
+      type: object
+      required:
+      - workspaceId
+      - organizationId
+      - customerId
+      - name
+      - slug
+      - initialSetupComplete
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        slug:
+          type: string
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        anonymousDataCollection:
+          type: boolean
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        firstCompletedSync:
+          type: boolean
+        feedbackDone:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigRead'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+        tombstone:
+          type: boolean
+        workspaceLimits:
+          $ref: '#/components/schemas/WorkspaceLimits'
+    WorkspaceReadList:
+      type: object
+      required:
+      - workspaces
+      properties:
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceRead'
+    WorkspaceUpdate:
+      type: object
+      description: Used to apply a patch-style update to a workspace, which means
+        that null properties remain unchanged
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        anonymousDataCollection:
+          type: boolean
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        notificationsConfig:
+          $ref: '#/components/schemas/NotificationsConfig'
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+    WorkspaceUpdateName:
+      type: object
+      required:
+      - workspaceId
+      - name
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+    WorkspaceUpdateOrganization:
+      type: object
+      required:
+      - workspaceId
+      - organizationId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceUsageRead:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionUsageRead'
+    WorkspaceUsageRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - timeWindow
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        timeWindow:
+          $ref: '#/components/schemas/ConsumptionTimeWindow'
+    Notification:
+      type: object
+      required:
+      - notificationType
+      - sendOnSuccess
+      - sendOnFailure
+      properties:
+        notificationType:
+          $ref: '#/components/schemas/NotificationType'
+        sendOnSuccess:
+          type: boolean
+          default: false
+        sendOnFailure:
+          type: boolean
+          default: true
+        slackConfiguration:
+          $ref: '#/components/schemas/SlackNotificationConfiguration'
+        customerioConfiguration:
+          $ref: '#/components/schemas/CustomerioNotificationConfiguration'
+    NotificationRead:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+    NotificationWebhookConfigValidationRequestBody:
+      type: object
+      required:
+      - NotificationTrigger
+      - slackConfiguration
+      properties:
+        slackConfiguration:
+          $ref: '#/components/schemas/SlackNotificationConfiguration'
+        notificationTrigger:
+          $ref: '#/components/schemas/NotificationTrigger'
+    ActorDefinitionIdWithScope:
+      type: object
+      required:
+      - actorDefinitionId
+      - scopeId
+      - scopeType
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+    ActorDefinitionVersionRead:
+      type: object
+      required:
+      - dockerRepository
+      - dockerImageTag
+      - supportsRefreshes
+      - supportState
+      - isVersionOverrideApplied
+      - supportsFileTransfer
+      properties:
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        supportsRefreshes:
+          type: boolean
+        isVersionOverrideApplied:
+          type: boolean
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        supportsFileTransfer:
+          type: boolean
+    CustomDestinationDefinitionCreate:
+      type: object
+      required:
+      - destinationDefinition
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        destinationDefinition:
+          $ref: '#/components/schemas/DestinationDefinitionCreate'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+    CustomSourceDefinitionCreate:
+      type: object
+      required:
+      - sourceDefinition
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        sourceDefinition:
+          $ref: '#/components/schemas/SourceDefinitionCreate'
+    DeclarativeManifestsReadList:
+      type: object
+      required:
+      - manifestVersions
+      properties:
+        manifestVersions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeclarativeManifestVersionRead'
+    DeclarativeSourceDefinitionCreateManifestRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      - setAsActiveManifest
+      - declarativeManifest
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        setAsActiveManifest:
+          type: boolean
+        declarativeManifest:
+          $ref: '#/components/schemas/DeclarativeSourceManifest'
+        componentsFileContent:
+          type: string
+    DestinationDefinitionIdRequestBody:
+      type: object
+      required:
+      - destinationDefinitionId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+    DestinationDefinitionIdWithWorkspaceId:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    DestinationDefinitionRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - name
+      - dockerRepository
+      - dockerImageTag
+      - documentationUrl
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        name:
+          type: string
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        documentationUrl:
+          type: string
+          format: uri
+        icon:
+          type: string
+        protocolVersion:
+          description: The Airbyte Protocol version supported by the connector
+          type: string
+        custom:
+          description: Whether the connector is custom or not
+          type: boolean
+          default: false
+        enterprise:
+          description: Whether the connector is an enterprise connector
+          type: boolean
+          default: false
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        releaseStage:
+          $ref: '#/components/schemas/ReleaseStage'
+        releaseDate:
+          description: The date when this connector was first released, in yyyy-mm-dd
+            format.
+          type: string
+          format: date
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        metrics:
+          description: Public metrics for the connector
+          type: object
+        language:
+          description: The language the connector is written in
+          type: string
+    DestinationDefinitionReadList:
+      type: object
+      required:
+      - destinationDefinitions
+      properties:
+        destinationDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationDefinitionRead'
+    DestinationDefinitionSpecificationRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - jobInfo
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        documentationUrl:
+          type: string
+        connectionSpecification:
+          $ref: '#/components/schemas/DestinationDefinitionSpecification'
+        advancedAuth:
+          $ref: '#/components/schemas/AdvancedAuth'
+        advancedAuthGlobalCredentialsAvailable:
+          type: boolean
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+        supportedDestinationSyncModes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationSyncMode'
+    DestinationDefinitionUpdate:
+      type: object
+      required:
+      - destinationDefinitionId
+      - dockerImageag
+      properties:
+        name:
+          type: string
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        dockerImageTag:
+          type: string
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationIdRequestBody:
+      type: object
+      required:
+      - destinationId
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+    EnterpriseSourceStubsReadList:
+      type: object
+      required:
+      - enterpriseSourceStubs
+      properties:
+        enterpriseSourceStubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseSourceStub'
+          description: A list of source stubs fetched from a JSON file.
+    GetActorDefinitionVersionDefaultRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+    ListDeclarativeManifestsRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    PrivateDestinationDefinitionRead:
+      type: object
+      required:
+      - destinationDefinition
+      - granted
+      properties:
+        destinationDefinition:
+          $ref: '#/components/schemas/DestinationDefinitionRead'
+        granted:
+          type: boolean
+    PrivateDestinationDefinitionReadList:
+      type: object
+      required:
+      - destinationDefinitions
+      properties:
+        destinationDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivateDestinationDefinitionRead'
+    PrivateSourceDefinitionRead:
+      type: object
+      required:
+      - sourceDefinition
+      - granted
+      properties:
+        sourceDefinition:
+          $ref: '#/components/schemas/SourceDefinitionRead'
+        granted:
+          type: boolean
+    PrivateSourceDefinitionReadList:
+      type: object
+      required:
+      - sourceDefinitions
+      properties:
+        sourceDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivateSourceDefinitionRead'
+    ResolveActorDefinitionVersionRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      - actorType
+      - dockerImageTag
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+        dockerImageTag:
+          type: string
+    ResolveActorDefinitionVersionResponse:
+      type: object
+      required:
+      - versionId
+      - dockerRepository
+      - dockerImageTag
+      - supportRefreshes
+      - supportFileTransfer
+      properties:
+        versionId:
+          $ref: '#/components/schemas/ActorDefinitionVersionId'
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        supportRefreshes:
+          type: boolean
+        supportFileTransfer:
+          type: boolean
+    SourceDefinitionIdRequestBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    SourceDefinitionIdWithWorkspaceId:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    SourceDefinitionRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - name
+      - dockerRepository
+      - dockerImageTag
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        name:
+          type: string
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        documentationUrl:
+          type: string
+          format: uri
+        icon:
+          type: string
+        protocolVersion:
+          description: The Airbyte Protocol version supported by the connector
+          type: string
+        custom:
+          description: Whether the connector is custom or not
+          type: boolean
+          default: false
+        enterprise:
+          description: Whether the connector is an enterprise connector
+          type: boolean
+          default: false
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        releaseStage:
+          $ref: '#/components/schemas/ReleaseStage'
+        releaseDate:
+          description: The date when this connector was first released, in yyyy-mm-dd
+            format.
+          type: string
+          format: date
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonFormat(pattern="yyyy-MM-dd")'
+        sourceType:
+          type: string
+          enum:
+          - api
+          - file
+          - database
+          - custom
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+        maxSecondsBetweenMessages:
+          description: Number of seconds allowed between 2 airbyte protocol messages.
+            The source will timeout if this delay is reach
+          type: integer
+          format: int64
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        metrics:
+          description: Public metrics for the connector
+          type: object
+        language:
+          description: The language the connector is written in
+          type: string
+    SourceDefinitionReadList:
+      type: object
+      required:
+      - sourceDefinitions
+      properties:
+        sourceDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceDefinitionRead'
+    SourceDefinitionSpecificationRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - jobInfo
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        documentationUrl:
+          type: string
+        connectionSpecification:
+          $ref: '#/components/schemas/SourceDefinitionSpecification'
+        advancedAuth:
+          $ref: '#/components/schemas/AdvancedAuth'
+        advancedAuthGlobalCredentialsAvailable:
+          type: boolean
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+    SourceDefinitionUpdate:
+      type: object
+      description: Update the SourceDefinition. Currently, the only allowed attribute
+        to update is the default docker image version.
+      required:
+      - sourceDefinitionId
+      - dockerImageTag
+      properties:
+        name:
+          type: string
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        dockerImageTag:
+          type: string
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceIdRequestBody:
+      type: object
+      required:
+      - sourceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+    UpdateActiveManifestRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      - version
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        version:
+          $ref: '#/components/schemas/ManifestVersion'
+    BuilderProjectForDefinitionRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      - workspaceId
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    BuilderProjectForDefinitionResponse:
+      type: object
+      required:
+      - builderProjectId
+      properties:
+        builderProjectId:
+          type: string
+          format: uuid
+          nullable: true
+    BuilderProjectOauthConsentRequest:
+      type: object
+      required:
+      - builderProjectId
+      - workspaceId
+      - redirectUrl
+      properties:
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+    CompleteConnectorBuilderProjectOauthRequest:
+      type: object
+      required:
+      - builderProjectId
+      - workspaceId
+      properties:
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+    CompleteOAuthResponse:
+      type: object
+      required:
+      - request_succeeded
+      - auth_payload
+      properties:
+        request_succeeded:
+          type: boolean
+        request_error:
+          type: string
+        auth_payload:
+          type: object
+          additionalProperties: true
+    ConnectorBuilderProjectForkRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - baseActorDefinitionId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        baseActorDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    ConnectorBuilderProjectIdWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        version:
+          $ref: '#/components/schemas/ManifestVersion'
+    ConnectorBuilderProjectRead:
+      type: object
+      required:
+      - builderProject
+      properties:
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetailsRead'
+        declarativeManifest:
+          $ref: '#/components/schemas/DeclarativeManifestRead'
+        testingValues:
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectReadList:
+      type: object
+      required:
+      - projects
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorBuilderProjectDetailsRead'
+    ConnectorBuilderProjectStreamRead:
+      type: object
+      required:
+      - logs
+      - slices
+      - test_read_limit_reached
+      properties:
+        logs:
+          type: array
+          description: The LOG AirbyteMessages that were emitted during the read of
+            this slice
+          items:
+            type: object
+            required:
+            - message
+            - level
+            properties:
+              message:
+                type: string
+              level:
+                type: string
+                enum:
+                - INFO
+                - WARN
+                - ERROR
+                - FATAL
+              internal_message:
+                type: string
+              stacktrace:
+                type: string
+        slices:
+          type: array
+          description: The stream slices returned from the read command. If no stream
+            slicer is configured, this should contain a single item containing all
+            of the results.
+          items:
+            type: object
+            required:
+            - pages
+            properties:
+              pages:
+                type: array
+                description: The pages returned from the read command. If no pagination
+                  is configured, this should contain a single item containing all
+                  of the results.
+                items:
+                  type: object
+                  required:
+                  - records
+                  properties:
+                    records:
+                      type: array
+                      description: The RECORD AirbyteMessages coming from the read
+                        operation for this page
+                      items:
+                        type: object
+                    request:
+                      $ref: '#/components/schemas/ConnectorBuilderHttpRequest'
+                    response:
+                      $ref: '#/components/schemas/ConnectorBuilderHttpResponse'
+              slice_descriptor:
+                type: object
+                description: An object describing the current slice. This can be omitted
+                  if a stream slicer is not configured.
+              state:
+                type: array
+                items:
+                  type: object
+                  description: The STATE AirbyteMessage emitted at the end of this
+                    slice. This can be omitted if a stream slicer is not configured.
+              auxiliary_requests:
+                type: array
+                description: Non-data requests made at the slice level, e.g. creation
+                  / polling requests for async stream slices
+                items:
+                  $ref: '#/components/schemas/ConnectorBuilderAuxiliaryRequest'
+        test_read_limit_reached:
+          type: boolean
+          description: Whether the maximum number of request per slice or the maximum
+            number of slices queried has been reached
+        auxiliary_requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorBuilderAuxiliaryRequest'
+        inferred_schema:
+          type: object
+          description: The narrowest JSON Schema against which every AirbyteRecord
+            in the slices can validate successfully. This is inferred from reading
+            every record in the output slices.
+        inferred_datetime_formats:
+          type: object
+          description: Fields that match the given datetime format in every encountered
+            record. The property names are the fields, the property values are the
+            datetime formats.
+        latest_config_update:
+          description: The latest configuration emitted by the platform. The connector
+            builder uses this to update its state when a new configuration is generated,
+            to ensure that the user always work with the latest configuration.
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectStreamReadRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - manifest
+      - streamName
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        manifest:
+          $ref: '#/components/schemas/DeclarativeManifest'
+        streamName:
+          type: string
+          description: Name of the stream to read
+        formGeneratedManifest:
+          type: boolean
+          description: Indicates if the manifest was auto-generated from the form-based
+            Connector Builder UI
+          default: false
+        recordLimit:
+          type: integer
+          default: 1000
+          minimum: 1
+          maximum: 10000
+          description: Maximum number of records that will be returned to the client
+            from connector builder test reads
+        pageLimit:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
+          description: Maximum number of pages that will be returned to the client
+            from connector builder test reads
+        sliceLimit:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
+          description: Maximum number of slices that will be returned to the client
+            from connector builder test reads
+        state:
+          type: array
+          items:
+            type: object
+            description: The AirbyteStateMessage object to use as the starting state
+              for this read
+    ConnectorBuilderProjectTestingValues:
+      type: object
+      description: The config blob containing the user inputs for testing
+    ConnectorBuilderProjectTestingValuesUpdate:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - spec
+      - testingValues
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        spec:
+          $ref: '#/components/schemas/SourceDefinitionSpecification'
+        testingValues:
+          $ref: '#/components/schemas/ConnectorBuilderProjectTestingValues'
+    ConnectorBuilderProjectWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProject
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetails'
+    ConnectorBuilderPublishRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - name
+      - initialDeclarativeManifest
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        name:
+          type: string
+        initialDeclarativeManifest:
+          $ref: '#/components/schemas/DeclarativeSourceManifest'
+        componentsFileContent:
+          type: string
+    DeclarativeManifestBaseImageRead:
+      description: Base image associated with a declarative manifest
+      type: object
+      properties:
+        baseImage:
+          type: string
+    DeclarativeManifestRequestBody:
+      type: object
+      required:
+      - manifest
+      properties:
+        manifest:
+          $ref: '#/components/schemas/DeclarativeManifest'
+    ExistingConnectorBuilderProjectWithWorkspaceId:
+      type: object
+      required:
+      - workspaceId
+      - builderProjectId
+      - builderProject
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        builderProjectId:
+          $ref: '#/components/schemas/ConnectorBuilderProjectId'
+        builderProject:
+          $ref: '#/components/schemas/ConnectorBuilderProjectDetails'
+    OAuthConsentRead:
+      type: object
+      required:
+      - consentUrl
+      properties:
+        consentUrl:
+          type: string
+    SourceDefinitionIdBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    ConnectorDocumentationRead:
+      type: object
+      required:
+      - doc
+      properties:
+        doc:
+          type: string
+    ConnectorDocumentationRequestBody:
+      type: object
+      required:
+      - actorType
+      - actorDefinitionId
+      - workspaceId
+      properties:
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        actorId:
+          $ref: '#/components/schemas/ActorId'
+    ActorCatalogWithUpdatedAt:
+      description: A source actor catalog with the timestamp it was mostly recently
+        updated
+      type: object
+      properties:
+        updatedAt:
+          type: integer
+          format: int64
+        catalog:
+          type: object
+    CheckConnectionRead:
+      type: object
+      required:
+      - jobInfo
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+    DiscoverCatalogResult:
+      type: object
+      required:
+      - catalogId
+      properties:
+        catalogId:
+          type: string
+          format: uuid
+    PartialSourceUpdate:
+      type: object
+      required:
+      - sourceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceAutoPropagateChange:
+      description: Input of the source propagation, it contains the discovered catalog
+        and a list of diff that need to be applied to the existing catalog.
+      type: object
+      required:
+      - catalog
+      - catalogId
+      - sourceId
+      - workspaceId
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        catalogId:
+          type: string
+          format: uuid
+        sourceId:
+          type: string
+          format: uuid
+        workspaceId:
+          type: string
+          format: uuid
+    SourceCloneRequestBody:
+      description: The values required to configure the source. The schema for this
+        should have an id of the existing source along with the configuration you
+        want to change in case.
+      type: object
+      required:
+      - sourceCloneId
+      properties:
+        sourceCloneId:
+          $ref: '#/components/schemas/SourceId'
+        sourceConfiguration:
+          $ref: '#/components/schemas/SourceCloneConfiguration'
+    SourceCreate:
+      type: object
+      required:
+      - workspaceId
+      - name
+      - sourceDefinitionId
+      - connectionConfiguration
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceDiscoverSchemaRead:
+      description: Returns the results of a discover catalog job. If the job was not
+        successful, the catalog field will not be present. jobInfo will aways be present
+        and its status be used to determine if the job was successful or not.
+      type: object
+      required:
+      - jobInfo
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+        catalogId:
+          type: string
+          format: uuid
+        catalogDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+        breakingChange:
+          type: boolean
+        connectionStatus:
+          $ref: '#/components/schemas/ConnectionStatus'
+    SourceDiscoverSchemaRequestBody:
+      type: object
+      required:
+      - sourceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionId:
+          type: string
+          format: uuid
+        disable_cache:
+          type: boolean
+        notifySchemaChange:
+          type: boolean
+        priority:
+          $ref: '#/components/schemas/WorkloadPriority'
+    SourceDiscoverSchemaWriteRequestBody:
+      description: to write this requested object to database.
+      type: object
+      required:
+      - catalog
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectorVersion:
+          type: string
+        configurationHash:
+          type: string
+    SourceRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - sourceId
+      - workspaceId
+      - connectionConfiguration
+      - name
+      - sourceName
+      - createdAt
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        sourceName:
+          type: string
+        icon:
+          type: string
+        isVersionOverrideApplied:
+          type: boolean
+        isEntitled:
+          type: boolean
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        status:
+          $ref: '#/components/schemas/ActorStatus'
+        createdAt:
+          type: integer
+          format: int64
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceReadList:
+      type: object
+      required:
+      - sources
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceRead'
+    SourceSearch:
+      type: object
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        sourceName:
+          type: string
+    SourceUpdate:
+      type: object
+      required:
+      - sourceId
+      - connectionConfiguration
+      - name
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationCloneRequestBody:
+      description: The values required to configure the destination. The schema for
+        this should have an id of the existing destination along with the configuration
+        you want to change in case.
+      type: object
+      required:
+      - destinationCloneId
+      properties:
+        destinationCloneId:
+          $ref: '#/components/schemas/DestinationId'
+        destinationConfiguration:
+          $ref: '#/components/schemas/DestinationCloneConfiguration'
+    DestinationCreate:
+      type: object
+      required:
+      - name
+      - workspaceId
+      - destinationDefinitionId
+      - connectionConfiguration
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - destinationId
+      - workspaceId
+      - connectionConfiguration
+      - name
+      - destinationName
+      - createdAt
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        destinationName:
+          type: string
+        icon:
+          type: string
+        isVersionOverrideApplied:
+          type: boolean
+        isEntitled:
+          type: boolean
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        status:
+          $ref: '#/components/schemas/ActorStatus'
+        createdAt:
+          type: integer
+          format: int64
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationReadList:
+      type: object
+      required:
+      - destinations
+      properties:
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationRead'
+    DestinationSearch:
+      type: object
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        destinationName:
+          type: string
+    DestinationUpdate:
+      type: object
+      required:
+      - destinationId
+      - connectionConfiguration
+      - name
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    PartialDestinationUpdate:
+      type: object
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    ActorDefinitionRequestBody:
+      type: object
+      additionalProperties: false
+      required:
+      - actorDefinitionId
+      - actorType
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+    ConnectionAndJobIdRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    ConnectionAutoPropagateResult:
+      description: The result of schema propagation for a given connection, with the
+        diff that was applied via auto-propagation.
+      type: object
+      properties:
+        propagatedDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+    ConnectionAutoPropagateSchemaChange:
+      description: Input of the schema propagation, with the catalog to be propagated
+        and the connection to propagate to
+      type: object
+      required:
+      - catalog
+      - catalogId
+      - connectionId
+      - workspaceId
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        catalogId:
+          type: string
+          format: uuid
+        connectionId:
+          type: string
+          format: uuid
+        workspaceId:
+          type: string
+          format: uuid
+    ConnectionContextRead:
+      description: Ids of related contextual domain models for a connection given
+        connection.
+      type: object
+      properties:
+        connectionId:
+          description: The ID of the relevant connection.
+          type: string
+          format: uuid
+        sourceId:
+          description: The ID of the relevant source.
+          type: string
+          format: uuid
+        destinationId:
+          description: The ID of the relevant destination.
+          type: string
+          format: uuid
+        sourceDefinitionId:
+          description: The ID of the relevant source definition.
+          type: string
+          format: uuid
+        destinationDefinitionId:
+          description: The ID of the relevant destination definition.
+          type: string
+          format: uuid
+        workspaceId:
+          description: The ID of the workspace related to this workflow
+          type: string
+          format: uuid
+        organizationId:
+          description: The ID of the organization related to this workflow
+          type: string
+          format: uuid
+    ConnectionCreate:
+      type: object
+      required:
+      - sourceId
+      - destinationId
+      - status
+      properties:
+        name:
+          type: string
+          description: Optional name of the connection
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionDataHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      - numberOfJobs
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        numberOfJobs:
+          type: integer
+    ConnectionEventIdRequestBody:
+      type: object
+      required:
+      - connectionEventId
+      - connectionId
+      properties:
+        connectionEventId:
+          $ref: '#/components/schemas/ConnectionEventId'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    ConnectionEventList:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEvent'
+    ConnectionEventListMinimal:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventMinimal'
+    ConnectionEventWithDetails:
+      type: object
+      required:
+      - id
+      - connectionId
+      - eventType
+      - summary
+      - details
+      - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/ConnectionEventId'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        eventType:
+          $ref: '#/components/schemas/ConnectionEventType'
+        summary:
+          description: JSON object without event details
+          type: object
+        details:
+          description: JSON object with event details
+          type: object
+        createdAt:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/UserReadInConnectionEvent'
+    ConnectionEventsBackfillRequestBody:
+      type: object
+      required:
+      - connectionId
+      - createdAtStart
+      - createdAtEnd
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        createdAtStart:
+          description: The start datetime of a time range to backfill events
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to backfill events
+          type: string
+          format: date-time
+    ConnectionEventsListMinimalRequestBody:
+      type: object
+      required:
+      - connectionIds
+      - eventTypes
+      - createdAtStart
+      - createdAtEnd
+      properties:
+        connectionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionId'
+        eventTypes:
+          description: filter events by event types
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventType'
+        createdAtStart:
+          description: The start datetime of a time range to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to filter by
+          type: string
+          format: date-time
+    ConnectionEventsRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        eventTypes:
+          description: filter events by event types (optional)
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventType'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        createdAtStart:
+          description: The start datetime of a time range to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to filter by
+          type: string
+          format: date-time
+    ConnectionLastJobPerStreamRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionLastJobPerStreamReadItem'
+    ConnectionLastJobPerStreamRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    ConnectionRead:
+      type: object
+      required:
+      - connectionId
+      - name
+      - sourceId
+      - destinationId
+      - syncCatalog
+      - status
+      - breakingChange
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        breakingChange:
+          type: boolean
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        created_at:
+          type: integer
+          format: int64
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionReadList:
+      type: object
+      required:
+      - connections
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionRead'
+    ConnectionSearch:
+      type: object
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        source:
+          $ref: '#/components/schemas/SourceSearch'
+        destination:
+          $ref: '#/components/schemas/DestinationSearch'
+    ConnectionStatusesRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionStatusRead'
+    ConnectionStatusesRequestBody:
+      type: object
+      required:
+      - connectionIds
+      properties:
+        connectionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionId'
+    ConnectionStreamHistoryRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionStreamHistoryReadItem'
+    ConnectionStreamHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      - timezone
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        timezone:
+          type: string
+    ConnectionStreamRefreshRequestBody:
+      type: object
+      required:
+      - connectionId
+      - refreshMode
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        refreshMode:
+          $ref: '#/components/schemas/RefreshMode'
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionStream'
+    ConnectionStreamRequestBody:
+      type: object
+      required:
+      - connectionId
+      - streams
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionStream'
+    ConnectionSyncProgressRead:
+      type: object
+      required:
+      - connectionId
+      - streams
+      - configType
+      properties:
+        connectionId:
+          type: string
+          format: uuid
+        jobId:
+          type: integer
+          format: int64
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamSyncProgressReadItem'
+        recordsEmitted:
+          type: integer
+          format: int64
+        recordsCommitted:
+          type: integer
+          format: int64
+        bytesEmitted:
+          type: integer
+          format: int64
+        bytesCommitted:
+          type: integer
+          format: int64
+        syncStartedAt:
+          type: integer
+          format: int64
+        configType:
+          $ref: '#/components/schemas/JobConfigType'
+    ConnectionUpdate:
+      type: object
+      description: Used to apply a patch-style update to a connection, which means
+        that null properties remain unchanged
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        name:
+          type: string
+          description: Name that will be set to this connection
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        operationIds:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        breakingChange:
+          type: boolean
+        tags:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionUpdateWithReason:
+      type: object
+      required:
+      - connectionUpdate
+      properties:
+        connectionUpdate:
+          $ref: '#/components/schemas/ConnectionUpdate'
+        updateReason:
+          type: string
+        autoUpdate:
+          type: boolean
+          default: false
+    ConnectionUptimeHistoryRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/JobSyncResultRead'
+    ConnectionUptimeHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        numberOfJobs:
+          type: integer
+    InternalOperationResult:
+      type: object
+      required:
+      - succeeded
+      properties:
+        succeeded:
+          type: boolean
+    JobInfoRead:
+      type: object
+      required:
+      - job
+      - attempts
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptInfoRead'
+    JobReadResponse:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    ListConnectionsForWorkspacesRequestBody:
+      type: object
+      required:
+      - workspaceIds
+      - userId
+      properties:
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+        userId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        includeDeleted:
+          type: boolean
+          default: false
+        tagIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagId'
+    PostprocessDiscoveredCatalogRequestBody:
+      type: object
+      required:
+      - catalogId
+      - connectionId
+      properties:
+        catalogId:
+          type: string
+          format: uuid
+        connectionId:
+          type: string
+          format: uuid
+    PostprocessDiscoveredCatalogResult:
+      type: object
+      properties:
+        appliedDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+    ConnectionState:
+      type: object
+      description: Contains the state for a connection. The stateType field identifies
+        what type of state it is. Only the field corresponding to that type will be
+        set, the rest will be null. If stateType=not_set, then none of the fields
+        will be set.
+      required:
+      - connectionId
+      - stateType
+      properties:
+        stateType:
+          $ref: '#/components/schemas/ConnectionStateType'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        state:
+          $ref: '#/components/schemas/StateBlob'
+        streamState:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamState'
+        globalState:
+          $ref: '#/components/schemas/GlobalState'
+    ConnectionStateCreateOrUpdate:
+      type: object
+      required:
+      - connectionId
+      - connectionState
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        connectionState:
+          $ref: '#/components/schemas/ConnectionState'
+    CheckOperationRead:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+    OperationCreate:
+      type: object
+      required:
+      - name
+      - operatorConfiguration
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        operatorConfiguration:
+          $ref: '#/components/schemas/OperatorConfiguration'
+    OperationIdRequestBody:
+      type: object
+      required:
+      - operationId
+      properties:
+        operationId:
+          $ref: '#/components/schemas/OperationId'
+    OperationRead:
+      type: object
+      required:
+      - operationId
+      - name
+      - operatorConfiguration
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        operationId:
+          $ref: '#/components/schemas/OperationId'
+        name:
+          type: string
+        operatorConfiguration:
+          $ref: '#/components/schemas/OperatorConfiguration'
+    OperationReadList:
+      type: object
+      required:
+      - operations
+      properties:
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationRead'
+    OperationUpdate:
+      type: object
+      required:
+      - operationId
+      - name
+      - operatorConfiguration
+      properties:
+        operationId:
+          $ref: '#/components/schemas/OperationId'
+        name:
+          type: string
+        operatorConfiguration:
+          $ref: '#/components/schemas/OperatorConfiguration'
+    OperatorConfiguration:
+      type: object
+      required:
+      - operatorType
+      properties:
+        operatorType:
+          $ref: '#/components/schemas/OperatorType'
+        webhook:
+          $ref: '#/components/schemas/OperatorWebhook'
+    DestinationCoreConfig:
+      type: object
+      required:
+      - workspaceId
+      - destinationDefinitionId
+      - connectionConfiguration
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    SourceCoreConfig:
+      type: object
+      required:
+      - sourceDefinitionId
+      - connectionConfiguration
+      - workspaceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    CompleteDestinationOAuthRequest:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+    CompleteSourceOauthRequest:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        returnSecretCoordinate:
+          type: boolean
+          description: If set to true, returns a secret coordinate which references
+            the stored tokens. By default, returns raw tokens.
+          default: false
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+    DestinationOauthConsentRequest:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      - redirectUrl
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+    RevokeSourceOauthTokensRequest:
+      type: object
+      required:
+      - sourceId
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    SetInstancewideDestinationOauthParamsRequestBody:
+      type: object
+      required:
+      - destinationDefinitionId
+      - params
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        params:
+          type: object
+          additionalProperties: true
+    SetInstancewideSourceOauthParamsRequestBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      - params
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        params:
+          type: object
+          additionalProperties: true
+    SourceOauthConsentRequest:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      - redirectUrl
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+    ConnectionStateType:
+      type: string
+      enum:
+      - global
+      - stream
+      - legacy
+      - not_set
+    WebBackendCheckUpdatesRead:
+      type: object
+      description: Summary of source and destination definitions that could be updated
+      required:
+      - destinationDefinitions
+      - sourceDefinitions
+      properties:
+        destinationDefinitions:
+          type: integer
+        sourceDefinitions:
+          type: integer
+    WebBackendConnectionCreate:
+      type: object
+      required:
+      - sourceId
+      - destinationId
+      - status
+      properties:
+        name:
+          type: string
+          description: Optional name of the connection
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationCreate'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendConnectionListRequestBody:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceId:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceId'
+        destinationId:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationId'
+    WebBackendConnectionRead:
+      type: object
+      required:
+      - connectionId
+      - name
+      - sourceId
+      - destinationId
+      - syncCatalog
+      - status
+      - source
+      - destination
+      - isSyncing
+      - schemaChange
+      - notifySchemaChanges
+      - notifySchemaChangesByEmail
+      - nonBreakingChangesPreference
+      - sourceActorDefinitionVersion
+      - destinationActorDefinitionVersion
+      - tags
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        source:
+          $ref: '#/components/schemas/SourceRead'
+        destination:
+          $ref: '#/components/schemas/DestinationRead'
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationRead'
+        latestSyncJobCreatedAt:
+          $ref: '#/components/schemas/JobCreatedAt'
+        latestSyncJobStatus:
+          $ref: '#/components/schemas/JobStatus'
+        isSyncing:
+          type: boolean
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        catalogId:
+          type: string
+          format: uuid
+        catalogDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+        geography:
+          $ref: '#/components/schemas/Geography'
+        schemaChange:
+          $ref: '#/components/schemas/SchemaChange'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        createdAt:
+          type: integer
+          format: int64
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        sourceActorDefinitionVersion:
+          $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        destinationActorDefinitionVersion:
+          $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendConnectionReadList:
+      type: object
+      required:
+      - connections
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebBackendConnectionListItem'
+    WebBackendConnectionRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        withRefreshedCatalog:
+          type: boolean
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    WebBackendConnectionUpdate:
+      type: object
+      description: Used to apply a patch-style update to a connection, which means
+        that null properties remain unchanged
+      required:
+      - connectionId
+      properties:
+        name:
+          type: string
+          description: Name that will be set to the connection
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        skipReset:
+          type: boolean
+        operations:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/WebBackendOperationCreateOrUpdate'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendCronExpressionDescription:
+      type: object
+      required:
+      - cronExpression
+      - description
+      - nextExecutions
+      properties:
+        cronExpression:
+          type: string
+        description:
+          type: string
+        nextExecutions:
+          type: array
+          description: Array of Unix timestamps for the next execution times
+          items:
+            type: integer
+            format: int64
+            description: Unix timestamp of a scheduled execution
+    WebBackendDescribeCronExpressionRequestBody:
+      type: object
+      required:
+      - cronExpression
+      properties:
+        cronExpression:
+          type: string
+    WebBackendGeographiesListResult:
+      type: object
+      required:
+      - geographies
+      properties:
+        geographies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Geography'
+    WebBackendValidateMappersRequestBody:
+      type: object
+      required:
+      - connectionId
+      - mappers
+      - streamDescriptor
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        streamDescriptor:
+          $ref: '#/components/schemas/StreamDescriptor'
+        mappers:
+          description: Mappers that should be applied to the stream before writing
+            to the destination.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfiguredStreamMapper'
+    WebBackendValidateMappersResponse:
+      type: object
+      required:
+      - initialFields
+      - outputFields
+      - mappers
+      properties:
+        initialFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSpec'
+        outputFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSpec'
+        mappers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapperValidationResult'
+    WebBackendWorkspaceState:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    WebBackendWorkspaceStateResult:
+      type: object
+      required:
+      - hasConnections
+      - hasSources
+      - hasDestinations
+      properties:
+        hasConnections:
+          type: boolean
+        hasSources:
+          type: boolean
+        hasDestinations:
+          type: boolean
+    AttemptInfoRead:
+      type: object
+      required:
+      - attempt
+      properties:
+        attempt:
+          $ref: '#/components/schemas/AttemptRead'
+        logType:
+          $ref: '#/components/schemas/LogFormatType'
+        logs:
+          oneOf:
+          - $ref: '#/components/schemas/LogEvents'
+          - $ref: '#/components/schemas/LogRead'
+    AttemptNumber:
+      type: integer
+      format: int32
+    AttemptStats:
+      type: object
+      properties:
+        recordsEmitted:
+          type: integer
+          format: int64
+        bytesEmitted:
+          type: integer
+          format: int64
+        stateMessagesEmitted:
+          type: integer
+          format: int64
+        bytesCommitted:
+          type: integer
+          format: int64
+        recordsCommitted:
+          type: integer
+          format: int64
+        estimatedRecords:
+          type: integer
+          format: int64
+        estimatedBytes:
+          type: integer
+          format: int64
+    BooleanRead:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: boolean
+    CheckInput:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    ConnectionId:
+      type: string
+      format: uuid
+    ConnectionJobRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    GetAttemptStatsRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    JobCreate:
+      type: object
+      required:
+      - connectionId
+      - isScheduled
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        isScheduled:
+          type: boolean
+    JobDebugInfoRead:
+      type: object
+      required:
+      - job
+      - attempts
+      properties:
+        job:
+          $ref: '#/components/schemas/JobDebugRead'
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptInfoRead'
+        workflowState:
+          $ref: '#/components/schemas/WorkflowStateRead'
+    JobId:
+      type: integer
+      format: int64
+    JobIdRequestBody:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          $ref: '#/components/schemas/JobId'
+    JobInfoLightRead:
+      type: object
+      required:
+      - job
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    JobListForWorkspacesRequestBody:
+      type: object
+      required:
+      - configTypes
+      properties:
+        configTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobConfigType'
+        configId:
+          type: string
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        statuses:
+          type: array
+          description: The Job statuses you want to filter by
+          items:
+            $ref: '#/components/schemas/JobStatus'
+        createdAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        updatedAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        updatedAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        orderByField:
+          description: The field to order by
+          type: string
+          enum:
+          - createdAt
+          - updatedAt
+        orderByMethod:
+          description: The order by method
+          type: string
+          enum:
+          - ASC
+          - DESC
+    JobListRequestBody:
+      type: object
+      required:
+      - configTypes
+      properties:
+        configTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobConfigType'
+        configId:
+          type: string
+        includingJobId:
+          description: If the job with this ID exists for the specified connection,
+            returns the number of pages of jobs necessary to include this job. Returns
+            an empty list if this job is specified and cannot be found in this connection.
+          $ref: '#/components/schemas/JobId'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        statuses:
+          type: array
+          description: The Job statuses you want to filter by
+          items:
+            $ref: '#/components/schemas/JobStatus'
+        createdAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        updatedAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        updatedAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        orderByField:
+          description: The field to order by
+          type: string
+          enum:
+          - createdAt
+          - updatedAt
+        orderByMethod:
+          description: The order by method
+          type: string
+          enum:
+          - ASC
+          - DESC
+    JobOptionalRead:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    JobReadList:
+      type: object
+      required:
+      - jobs
+      - totalJobCount
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobWithAttemptsRead'
+        totalJobCount:
+          description: the total count of jobs for the specified connection
+          type: integer
+          format: int64
+    JobRetryStateRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      - successiveCompleteFailures
+      - totalCompleteFailures
+      - successivePartialFailures
+      - totalPartialFailures
+      properties:
+        id:
+          type: string
+          format: uuid
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        successiveCompleteFailures:
+          type: integer
+        totalCompleteFailures:
+          type: integer
+        successivePartialFailures:
+          type: integer
+        totalPartialFailures:
+          type: integer
+    PersistCancelJobRequestBody:
+      type: object
+      required:
+      - attemptFailureSummary
+      - attemptNumber
+      - connectionId
+      - jobId
+      properties:
+        attemptFailureSummary:
+          description: Attempt failure summary serialized as a raw object
+          type: object
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    RetryStateRead:
+      type: object
+      required:
+      - id
+      - jobId
+      - connectionId
+      - successiveCompleteFailures
+      - totalCompleteFailures
+      - successivePartialFailures
+      - totalPartialFailures
+      properties:
+        id:
+          type: string
+          format: uuid
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        successiveCompleteFailures:
+          type: integer
+        totalCompleteFailures:
+          type: integer
+        successivePartialFailures:
+          type: integer
+        totalPartialFailures:
+          type: integer
+    SaveAttemptSyncConfigRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - syncConfig
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        syncConfig:
+          $ref: '#/components/schemas/AttemptSyncConfig'
+    SaveStatsRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - stats
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        stats:
+          $ref: '#/components/schemas/AttemptStats'
+        streamStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptStreamStats'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    SaveStreamAttemptMetadataRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - stats
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        streamMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamAttemptMetadata'
+    SyncInput:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    SyncJobInputRead:
+      description: This return a json blob aimed to be used as a JobInput. It is serialized
+        by the JobInput java class and should be deserialized into it.
+    OrganizationIdRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+    OrganizationUserReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationUserRead'
+    UserAuthIdRequestBody:
+      type: object
+      required:
+      - authUserId
+      properties:
+        authUserId:
+          type: string
+    UserEmailRequestBody:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+    UserGetOrCreateByAuthIdResponse:
+      type: object
+      required:
+      - userRead
+      - authUserId
+      - authProvider
+      properties:
+        userRead:
+          $ref: '#/components/schemas/UserRead'
+        authUserId:
+          description: The userId from the Auth provider
+          type: string
+        authProvider:
+          $ref: '#/components/schemas/AuthProvider'
+        newUserCreated:
+          type: boolean
+          default: false
+    UserIdRequestBody:
+      type: object
+      required:
+      - userId
+      properties:
+        userId:
+          $ref: '#/components/schemas/UserId'
+    UserRead:
+      type: object
+      required:
+      - userId
+      - email
+      - metadata
+      properties:
+        name:
+          description: Caption name for the user
+          type: string
+        userId:
+          $ref: '#/components/schemas/UserId'
+        defaultWorkspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        companyName:
+          type: string
+        email:
+          type: string
+          format: email
+        news:
+          type: boolean
+        metadata:
+          type: object
+          description: UI metadata required by frontend
+    UserUpdate:
+      type: object
+      required:
+      - userId
+      properties:
+        name:
+          description: Caption name for the user
+          type: string
+        userId:
+          $ref: '#/components/schemas/UserId'
+        defaultWorkspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        companyName:
+          type: string
+        news:
+          type: boolean
+        metadata:
+          type: object
+          description: UI metadata used in frontend
+    UserWithPermissionInfoReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserWithPermissionInfoRead'
+    WorkspaceUserAccessInfoReadList:
+      type: object
+      required:
+      - usersWithAccess
+      properties:
+        usersWithAccess:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceUserAccessInfoRead'
+    WorkspaceUserReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceUserRead'
+    PermissionCheckRead:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+    PermissionCheckRequest:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionCreate:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+          description: This is a temporary and optional field just for dual write
+            purpose during the data migration.
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionDeleteUserFromWorkspaceRequestBody:
+      type: object
+      required:
+      - userIdToRemove
+      - workspaceId
+      properties:
+        userIdToRemove:
+          type: string
+          format: uuid
+          description: The user ID for which to remove workspace permissions
+        workspaceId:
+          type: string
+          format: uuid
+          description: The workspace ID from which to remove all workspace-level permissions
+            for the indicated user
+    PermissionIdRequestBody:
+      type: object
+      required:
+      - permissionId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+    PermissionRead:
+      type: object
+      required:
+      - permissionId
+      - permissionType
+      - userId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionReadList:
+      type: object
+      required:
+      - permissions
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PermissionRead'
+    PermissionUpdate:
+      type: object
+      required:
+      - permissionId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+    PermissionsCheckMultipleWorkspacesRequest:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+    CreateOrUpdateSecretsPersistenceConfigRequestBody:
+      description: Object representing a secret persistence configuration create/update
+        request
+      required:
+      - secretPersistenceType
+      - configuration
+      - scope
+      - scopeId
+      properties:
+        secretPersistenceType:
+          $ref: '#/components/schemas/SecretPersistenceType'
+        configuration:
+          type: object
+        scope:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    SecretPersistenceConfig:
+      description: Object representing a secret persistence configuration
+      required:
+      - secretPersistenceType
+      - configuration
+      - scopeType
+      - scopeId
+      properties:
+        secretPersistenceType:
+          $ref: '#/components/schemas/SecretPersistenceType'
+        configuration:
+          $ref: '#/components/schemas/SecretPersistenceConfigurationJson'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    SecretPersistenceConfigGetRequestBody:
+      description: Request body for getting secret persistence config
+      required:
+      - scopeType
+      - scopeId
+      properties:
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+    HealthCheckRead:
+      type: object
+      required:
+      - available
+      properties:
+        available:
+          type: boolean
+    StreamStatusCreateRequestBody:
+      type: object
+      required:
+      - attemptNumber
+      - connectionId
+      - jobId
+      - jobType
+      - runState
+      - streamName
+      - transitionedAt
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        incompleteRunCause:
+          $ref: '#/components/schemas/StreamStatusIncompleteRunCause'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        runState:
+          $ref: '#/components/schemas/StreamStatusRunState'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        transitionedAt:
+          type: integer
+          format: int64
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        metadata:
+          $ref: '#/components/schemas/StreamStatusRateLimitedMetadata'
+    StreamStatusListRequestBody:
+      type: object
+      required:
+      - pagination
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    StreamStatusRead:
+      type: object
+      required:
+      - attemptNumber
+      - connectionId
+      - id
+      - jobId
+      - jobType
+      - runState
+      - streamName
+      - transitionedAt
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        id:
+          $ref: '#/components/schemas/StreamStatusId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        incompleteRunCause:
+          $ref: '#/components/schemas/StreamStatusIncompleteRunCause'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        runState:
+          $ref: '#/components/schemas/StreamStatusRunState'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        transitionedAt:
+          type: integer
+          format: int64
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        metadata:
+          $ref: '#/components/schemas/StreamStatusRateLimitedMetadata'
+    StreamStatusReadList:
+      type: object
+      properties:
+        streamStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamStatusRead'
+    StreamStatusUpdateRequestBody:
+      allOf:
+      - $ref: '#/components/schemas/StreamStatusCreateRequestBody'
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            $ref: '#/components/schemas/StreamStatusId'
+    InstanceConfigurationResponse:
+      type: object
+      required:
+      - airbyteUrl
+      - auth
+      - defaultOrganizationId
+      - defaultOrganizationEmail
+      - defaultUserId
+      - defaultWorkspaceId
+      - edition
+      - initialSetupComplete
+      - trackingStrategy
+      - version
+      - licenseStatus
+      properties:
+        edition:
+          type: string
+          enum:
+          - community
+          - pro
+          - enterprise
+          - trial
+        version:
+          description: release version for the corresponding edition
+          type: string
+        licenseStatus:
+          $ref: '#/components/schemas/LicenseStatus'
+        licenseExpirationDate:
+          type: integer
+          format: int64
+          nullable: true
+        auth:
+          $ref: '#/components/schemas/AuthConfiguration'
+        airbyteUrl:
+          type: string
+        initialSetupComplete:
+          type: boolean
+        defaultUserId:
+          type: string
+          format: uuid
+        defaultOrganizationId:
+          type: string
+          format: uuid
+        defaultOrganizationEmail:
+          type: string
+          format: email
+        defaultWorkspaceId:
+          type: string
+          format: uuid
+        trackingStrategy:
+          type: string
+          enum:
+          - logging
+          - segment
+    InstanceConfigurationSetupRequestBody:
+      type: object
+      required:
+      - email
+      - anonymousDataCollection
+      - initialSetupComplete
+      - displaySetupWizard
+      properties:
+        email:
+          type: string
+        anonymousDataCollection:
+          type: boolean
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        userName:
+          description: Optional name of the user to create. Defaults to 'Default User'
+            if not specified.
+          type: string
+        organizationName:
+          description: Optional name of the organization to create. Defaults to 'Default
+            Organization' if not specified.
+          type: string
+    LicenseInfoResponse:
+      type: object
+      required:
+      - edition
+      - licenseStatus
+      - usedEditors
+      - expirationDate
+      properties:
+        edition:
+          type: string
+        licenseStatus:
+          $ref: '#/components/schemas/LicenseStatus'
+        maxNodes:
+          type: integer
+        maxEditors:
+          type: integer
+        usedNodes:
+          type: integer
+        usedEditors:
+          type: integer
+        expirationDate:
+          type: integer
+          format: int64
+    BillingEvent:
+      description: Generic event for billing, mapped to a JsonNode
+      type: object
+      additionalProperties: true
+    CancelSubscriptionRead:
+      type: object
+      required:
+      - subscriptionEndsAt
+      properties:
+        subscriptionEndsAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+    CustomerPortalRead:
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+    CustomerPortalRequestBody:
+      type: object
+      required:
+      - organizationId
+      - returnUrl
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        returnUrl:
+          type: string
+        flow:
+          type: string
+          enum:
+          - portal
+          - payment_method
+          - setup
+          default: portal
+    ListInvoicesRead:
+      type: object
+      required:
+      - invoices
+      - hasMore
+      properties:
+        invoices:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceRead'
+        hasMore:
+          type: boolean
+    OrganizationSubscriptionInfoRead:
+      type: object
+      required:
+      - name
+      - selfServeSubscription
+      - balanceHidden
+      properties:
+        name:
+          type: string
+        selfServeSubscription:
+          type: boolean
+        cancellationDate:
+          $ref: '#/components/schemas/ISO8601DateTime'
+        balanceHidden:
+          description: Whether the organization balance is hidden and should not be
+            shown to the user.
+          type: boolean
+        upcomingInvoice:
+          type: object
+          description: Describe the current state of the upcoming invoice. If `hidden`
+            is `true`, this will be `null`, since no balance should be shown.
+          required:
+          - currency
+          - amount
+          - dueDate
+          properties:
+            currency:
+              type: string
+            amount:
+              type: string
+              description: The amount of the next upcoming invoice formatted as a
+                decimal number wrapped inside a string.
+            dueDate:
+              $ref: '#/components/schemas/LocalDate'
+        credits:
+          type: object
+          required:
+          - balance
+          - blocks
+          properties:
+            balance:
+              type: number
+              format: double
+            blocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditBlockRead'
+    OrganizationTrialStatusRead:
+      type: object
+      required:
+      - trialStatus
+      properties:
+        trialStatus:
+          type: string
+          description: Indicates the status of the trial for an organization
+          enum:
+          - pre_trial
+          - in_trial
+          - post_trial
+          x-enum-descriptions:
+          - The trial has not yet started for this organization
+          - The organization is currently in the trial. End of the trial is indicated
+            by the `trialEndsAt` property
+          - The organization has left the trial already
+        trialEndsAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+    PaymentInformationRead:
+      type: object
+      properties:
+        customer:
+          type: object
+          properties:
+            email:
+              type: string
+            customerAddress:
+              $ref: '#/components/schemas/AddressRead'
+            shippingAddress:
+              $ref: '#/components/schemas/AddressRead'
+            defaultPaymentMethod:
+              $ref: '#/components/schemas/PaymentMethodRead'
+    OrganizationPaymentConfigRead:
+      type: object
+      required:
+      - organizationId
+      - paymentStatus
+      - subscriptionStatus
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        paymentStatus:
+          type: string
+          enum:
+          - uninitialized
+          - okay
+          - grace_period
+          - disabled
+          - locked
+          - manual
+        subscriptionStatus:
+          type: string
+          enum:
+          - pre_subscription
+          - subscribed
+          - unsubscribed
+        paymentProviderId:
+          type: string
+        gracePeriodEndAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+        usageCategoryOverwrite:
+          type: string
+          enum:
+          - free
+          - internal
+    OrganizationPaymentConfigUpdateRequestBody:
+      type: object
+      required:
+      - organizationId
+      - paymentStatus
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        paymentStatus:
+          type: string
+          enum:
+          - uninitialized
+          - okay
+          - grace_period
+          - disabled
+          - locked
+          - manual
+        paymentProviderId:
+          type: string
+        usageCategoryOverwrite:
+          type: string
+          enum:
+          - free
+          - internal
+        gracePeriodEndAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+        newGracePeriodReason:
+          type: string
+    ListOrganizationsByUserRequestBody:
+      type: object
+      required:
+      - userId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    OrganizationCreateRequestBody:
+      type: object
+      required:
+      - userId
+      - organizationName
+      properties:
+        userId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        email:
+          type: string
+    OrganizationRead:
+      type: object
+      required:
+      - organizationId
+      - organizationName
+      - email
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        email:
+          type: string
+        ssoRealm:
+          type: string
+        organizationLimits:
+          $ref: '#/components/schemas/OrganizationLimits'
+    OrganizationReadList:
+      type: object
+      required:
+      - organizations
+      properties:
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationRead'
+    OrganizationUpdateRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        email:
+          type: string
+    OrganizationUsageRead:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndividualWorkspaceUsageRead'
+    OrganizationUsageRequestBody:
+      type: object
+      required:
+      - organizationId
+      - timeWindow
+      properties:
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+        timeWindow:
+          $ref: '#/components/schemas/ConsumptionTimeWindow'
+    DeploymentMetadataRead:
+      type: object
+      required:
+      - id
+      - mode
+      - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        mode:
+          type: string
+        version:
+          type: string
+    AccessToken:
+      required:
+      - access_token
+      type: object
+      properties:
+        access_token:
+          type: string
+    ApplicationCreate:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+      x-sdk-component: true
+    ApplicationIdRequestBody:
+      type: object
+      required:
+      - applicationId
+      properties:
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+        includeTombstone:
+          type: boolean
+    ApplicationRead:
+      required:
+      - id
+      - name
+      - clientId
+      - clientSecret
+      - createdAt
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        createdAt:
+          type: integer
+          format: int64
+      x-sdk-component: true
+    ApplicationReadList:
+      required:
+      - applications
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationRead'
+      x-sdk-component: true
+    ApplicationTokenRequest:
+      required:
+      - client_id
+      - client_secret
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    ScopedConfigurationContextRequestBody:
+      type: object
+      required:
+      - config_key
+      - scope_id
+      - scope_type
+      properties:
+        config_key:
+          type: string
+        resource_id:
+          type: string
+          format: UUID
+        resource_type:
+          type: string
+        scope_id:
+          type: string
+          format: UUID
+        scope_type:
+          type: string
+    ScopedConfigurationContextResponse:
+      type: object
+      properties:
+        activeConfiguration:
+          $ref: '#/components/schemas/ScopedConfigurationRead'
+        ancestorConfigurations:
+          description: List of configurations that have been created that will get
+            overridden by the scope currently being configured.
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopedConfigurationRead'
+        descendantConfigurations:
+          description: List of configurations that have been created that will override
+            the scope currently being configured.
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopedConfigurationRead'
+    ScopedConfigurationCreateRequestBody:
+      type: object
+      required:
+      - value
+      - config_key
+      - scope_id
+      - scope_type
+      - origin
+      - origin_type
+      properties:
+        value:
+          type: string
+        description:
+          type: string
+        reference_url:
+          type: string
+        config_key:
+          type: string
+        resource_id:
+          type: string
+        resource_type:
+          type: string
+        scope_id:
+          type: string
+        scope_type:
+          type: string
+        origin:
+          type: string
+        origin_type:
+          type: string
+        expires_at:
+          type: string
+          format: date
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonFormat(pattern="yyyy-MM-dd")'
+    ScopedConfigurationCreateResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ScopedConfigurationRead'
+    ScopedConfigurationDeleteRequestBody:
+      type: object
+      properties:
+        scopedConfigurationId:
+          type: string
+          format: uuid
+      required:
+      - scopedConfigurationId
+    ScopedConfigurationDeleteResponse:
+      type: object
+      properties:
+        scopedConfigurationId:
+          type: string
+          format: uuid
+    ScopedConfigurationListRequestBody:
+      type: object
+      properties:
+        config_key:
+          type: string
+          description: Key of the configuration to filter by
+    ScopedConfigurationListResponse:
+      type: object
+      properties:
+        scopedConfigurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScopedConfigurationRead'
+    ScopedConfigurationReadRequestBody:
+      type: object
+      properties:
+        scopedConfigurationId:
+          type: string
+          format: uuid
+      required:
+      - scopedConfigurationId
+    ScopedConfigurationReadResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ScopedConfigurationRead'
+    ScopedConfigurationUpdateRequestBody:
+      type: object
+      required:
+      - scopedConfigurationId
+      - data
+      properties:
+        scopedConfigurationId:
+          type: string
+          format: uuid
+        data:
+          $ref: '#/components/schemas/ScopedConfigurationCreateRequestBody'
+    ScopedConfigurationUpdateResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ScopedConfigurationRead'
+    ConnectorRolloutActorSyncInfoResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          properties:
+            actor_selection_info:
+              $ref: '#/components/schemas/ConnectorRolloutActorSelectionInfo'
+            syncs:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/ConnectorRolloutActorSyncInfo'
+    ConnectorRolloutFinalizeRequestBody:
+      type: object
+      required:
+      - id
+      - state
+      - rollout_strategy
+      properties:
+        id:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/ConnectorRolloutStateTerminal'
+        error_msg:
+          type: string
+        failed_reason:
+          type: string
+        rollout_strategy:
+          $ref: '#/components/schemas/ConnectorRolloutStrategy'
+        updated_by:
+          type: string
+          format: uuid
+        retain_pins_on_cancellation:
+          type: boolean
+          default: true
+    ConnectorRolloutFinalizeResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/ConnectorRolloutRead'
+    ConnectorRolloutGetActorSyncInfoRequestBody:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    ConnectorRolloutListByActorDefinitionIdRequestBody:
+      type: object
+      required:
+      - actor_definition_id
+      properties:
+        actor_definition_id:
+          type: string
+          format: uuid
+    ConnectorRolloutListRequestBody:
+      type: object
+      required:
+      - docker_image_tag
+      - actor_definition_id
+      properties:
+        docker_repository:
+          type: string
+        docker_image_tag:
+          type: string
+        actor_definition_id:
+          type: string
+          format: uuid
+    ConnectorRolloutListResponse:
+      type: object
+      properties:
+        connectorRollouts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorRolloutRead'
+    ConnectorRolloutManualFinalizeRequestBody:
+      type: object
+      required:
+      - docker_repository
+      - docker_image_tag
+      - actor_definition_id
+      - id
+      - updated_by
+      - state
+      properties:
+        docker_repository:
+          type: string
+        docker_image_tag:
+          type: string
+        actor_definition_id:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        updated_by:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/ConnectorRolloutStateTerminal'
+        error_msg:
+          type: string
+        failed_reason:
+          type: string
+        retain_pins_on_cancellation:
+          type: boolean
+          default: true
+    ConnectorRolloutManualFinalizeResponse:
+      type: object
+      required:
+      - data
+      properties:
+        status:
+          type: string
+    ConnectorRolloutManualRolloutRequestBody:
+      type: object
+      required:
+      - docker_repository
+      - docker_image_tag
+      - actor_definition_id
+      - id
+      - updated_by
+      properties:
+        docker_repository:
+          type: string
+        docker_image_tag:
+          type: string
+        actor_definition_id:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        updated_by:
+          type: string
+          format: uuid
+        actor_ids:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActorId'
+        target_percentage:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+        migrate_pins:
+          type: boolean
+          default: true
+    ConnectorRolloutManualRolloutResponse:
+      type: object
+      required:
+      - data
+      properties:
+        status:
+          type: string
+    ConnectorRolloutManualStartRequestBody:
+      type: object
+      required:
+      - docker_repository
+      - docker_image_tag
+      - actor_definition_id
+      - updated_by
+      - rollout_strategy
+      properties:
+        docker_repository:
+          type: string
+        docker_image_tag:
+          type: string
+        actor_definition_id:
+          type: string
+          format: uuid
+        updated_by:
+          type: string
+          format: uuid
+        rollout_strategy:
+          $ref: '#/components/schemas/ConnectorRolloutStrategy'
+        initial_rollout_pct:
+          type: integer
+          minimum: 0
+          maximum: 100
+          format: int32
+        final_target_rollout_pct:
+          type: integer
+          minimum: 0
+          maximum: 100
+          format: int32
+        migrate_pins:
+          type: boolean
+          default: true
+    ConnectorRolloutReadRequestBody:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    ConnectorRolloutReadResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/ConnectorRolloutRead'
+    ConnectorRolloutRequestBody:
+      type: object
+      required:
+      - id
+      - rollout_strategy
+      properties:
+        id:
+          type: string
+          format: uuid
+        actor_ids:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActorId'
+        target_percentage:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+        rollout_strategy:
+          $ref: '#/components/schemas/ConnectorRolloutStrategy'
+        updated_by:
+          type: string
+          format: uuid
+    ConnectorRolloutResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/ConnectorRolloutRead'
+    ConnectorRolloutStartRequestBody:
+      type: object
+      required:
+      - id
+      - workflow_run_id
+      - rollout_strategy
+      properties:
+        id:
+          type: string
+          format: uuid
+        workflow_run_id:
+          type: string
+        rollout_strategy:
+          $ref: '#/components/schemas/ConnectorRolloutStrategy'
+        updated_by:
+          type: string
+          format: uuid
+        migrate_pins:
+          type: boolean
+          default: true
+    ConnectorRolloutStartResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          $ref: '#/components/schemas/ConnectorRolloutRead'
+    ConnectorRolloutUpdateStateRequestBody:
+      required:
+      - state
+      properties:
+        id:
+          type: string
+          format: uuid
+        docker_repository:
+          type: string
+        docker_image_tag:
+          type: string
+        actor_definition_id:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/ConnectorRolloutState'
+        error_msg:
+          type: string
+        failed_reason:
+          type: string
+        paused_reason:
+          type: string
+        updated_by:
+          type: string
+          format: uuid
+    InviteCodeRequestBody:
+      type: object
+      required:
+      - inviteCode
+      properties:
+        inviteCode:
+          type: string
+    UserInvitationCreateRequestBody:
+      type: object
+      required:
+      - invitedEmail
+      - permissionType
+      - scopeType
+      - scopeId
+      properties:
+        invitedEmail:
+          type: string
+          format: email
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    UserInvitationCreateResponse:
+      type: object
+      properties:
+        inviteCode:
+          type: string
+          description: The created invite code, if the request resulted in a new invitation
+            being created.
+        directlyAdded:
+          type: boolean
+          description: True if the request resulted in the user being directly added,
+            without a created invitation.
+    UserInvitationListRequestBody:
+      type: object
+      required:
+      - scopeType
+      - scopeId
+      properties:
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    UserInvitationRead:
+      type: object
+      required:
+      - id
+      - inviteCode
+      - inviterUserId
+      - invitedEmail
+      - scopeId
+      - scopeType
+      - permissionType
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        inviteCode:
+          type: string
+        inviterUserId:
+          type: string
+          format: uuid
+        invitedEmail:
+          type: string
+          format: email
+        scopeId:
+          type: string
+          format: uuid
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        status:
+          $ref: '#/components/schemas/UserInvitationStatus'
+        createdAt:
+          type: integer
+          format: int64
+        updatedAt:
+          type: integer
+          format: int64
+    Tag:
+      description: A tag that can be associated with a connection. Useful for grouping
+        and organizing connections in a workspace.
+      type: object
+      x-sdk-component: true
+      required:
+      - tagId
+      - workspaceId
+      - name
+      - color
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+    TagCreateRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - name
+      - color
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+    TagDeleteRequestBody:
+      type: object
+      required:
+      - tagId
+      - workspaceId
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    TagListRequestBody:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    TagUpdateRequestBody:
+      type: object
+      required:
+      - tagId
+      - workspaceId
+      - name
+      - color
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+    DiagnosticReportRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    SignalInput:
+      type: object
+      required:
+      - workflowType
+      - workflowId
+      properties:
+        workflowType:
+          type: string
+        workflowId:
+          type: string
+    DataplaneGroupCreateRequestBody:
+      type: object
+      required:
+      - organization_id
+      - name
+      - enabled
+      properties:
+        organization_id:
+          type: string
+          format: UUID
+        name:
+          type: string
+        enabled:
+          type: boolean
+    DataplaneGroupDeleteRequestBody:
+      type: object
+      required:
+      - dataplane_group_id
+      properties:
+        dataplane_group_id:
+          type: string
+          format: uuid
+    DataplaneGroupListRequestBody:
+      type: object
+      required:
+      - organization_id
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+    DataplaneGroupListResponse:
+      type: object
+      properties:
+        dataplaneGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataplaneGroupRead'
+    DataplaneGroupRead:
+      type: object
+      required:
+      - name
+      - dataplane_group_id
+      - organization_id
+      - enabled
+      - created_at
+      - updated_at
+      properties:
+        name:
+          type: string
+        dataplane_group_id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DataplaneGroupUpdateRequestBody:
+      type: object
+      required:
+      - dataplane_group_id
+      properties:
+        dataplane_group_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        enabled:
+          type: boolean
+    DataplaneCreateRequestBody:
+      type: object
+      required:
+      - dataplane_group_id
+      - name
+      - enabled
+      properties:
+        organization_id:
+          type: string
+          format: UUID
+        dataplane_group_id:
+          type: string
+          format: UUID
+        name:
+          type: string
+        enabled:
+          type: boolean
+    DataplaneCreateResponse:
+      type: object
+      required:
+      - dataplane_id
+      - client_id
+      - client_secret
+      properties:
+        dataplane_id:
+          type: string
+          format: UUID
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    DataplaneDeleteRequestBody:
+      type: object
+      required:
+      - dataplane_id
+      properties:
+        dataplane_id:
+          type: string
+          format: uuid
+    DataplaneGetIdRequestBody:
+      type: object
+      required:
+      - workloadPriority
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+        actorId:
+          $ref: '#/components/schemas/ActorId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        workloadPriority:
+          $ref: '#/components/schemas/WorkloadPriority'
+    DataplaneListRequestBody:
+      type: object
+      required:
+      - dataplane_group_id
+      properties:
+        dataplane_group_id:
+          type: string
+          format: uuid
+    DataplaneListResponse:
+      type: object
+      properties:
+        dataplanes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataplaneRead'
+    DataplaneRead:
+      type: object
+      required:
+      - name
+      - dataplane_id
+      - dataplane_group_id
+      - enabled
+      - created_at
+      - updated_at
+      properties:
+        name:
+          type: string
+        dataplane_id:
+          type: string
+          format: uuid
+        dataplane_group_id:
+          type: string
+          format: uuid
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DataplaneReadId:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
+    DataplaneUpdateRequestBody:
+      type: object
+      required:
+      - dataplane_id
+      properties:
+        dataplane_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        enabled:
+          type: boolean
+    ApplicationTokenRequestWithGrant:
+      required:
+      - client_id
+      - client_secret
+      - grant_type
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        grant-type:
+          enum:
+          - client_credentials
+      x-sdk-component: true
+    ConnectionCreateRequest:
+      required:
+      - sourceId
+      - destinationId
+      type: object
+      properties:
+        name:
+          description: Optional name of the connection
+          type: string
+        sourceId:
+          format: uuid
+          type: string
+        destinationId:
+          format: uuid
+          type: string
+        configurations:
+          $ref: '#/components/schemas/StreamConfigurations'
+        schedule:
+          $ref: '#/components/schemas/AirbyteApiConnectionSchedule'
+        dataResidency:
+          $ref: '#/components/schemas/GeographyEnum'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionEnum'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'custom_format'. If blank
+            then behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: "Prefix that will be prepended to the name of each stream when\
+            \ it is written to the destination (ex. \u201Cairbyte_\u201D causes \u201C\
+            projects\u201D => \u201Cairbyte_projects\u201D)."
+          default: ''
+        nonBreakingSchemaUpdatesBehavior:
+          $ref: '#/components/schemas/NonBreakingSchemaUpdatesBehaviorEnum'
+        status:
+          $ref: '#/components/schemas/ConnectionStatusEnum'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      x-sdk-entity: Connection
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    ConnectionPatchRequest:
+      type: object
+      properties:
+        name:
+          description: Optional name of the connection
+          type: string
+        configurations:
+          $ref: '#/components/schemas/StreamConfigurations'
+        schedule:
+          $ref: '#/components/schemas/AirbyteApiConnectionSchedule'
+        dataResidency:
+          $ref: '#/components/schemas/GeographyEnumNoDefault'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionEnumNoDefault'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'custom_format'. If blank
+            then behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: "Prefix that will be prepended to the name of each stream when\
+            \ it is written to the destination (ex. \u201Cairbyte_\u201D causes \u201C\
+            projects\u201D => \u201Cairbyte_projects\u201D)."
+        nonBreakingSchemaUpdatesBehavior:
+          $ref: '#/components/schemas/NonBreakingSchemaUpdatesBehaviorEnumNoDefault'
+        status:
+          $ref: '#/components/schemas/ConnectionStatusEnum'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      x-sdk-entity: Connection
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    ConnectionResponse:
+      title: Root Type for ConnectionResponse
+      description: Provides details of a single connection.
+      type: object
+      required:
+      - connectionId
+      - name
+      - sourceId
+      - destinationId
+      - workspaceId
+      - status
+      - schedule
+      - dataResidency
+      - configurations
+      - createdAt
+      - tags
+      properties:
+        connectionId:
+          format: UUID
+          type: string
+        name:
+          type: string
+        sourceId:
+          format: UUID
+          type: string
+        destinationId:
+          format: UUID
+          type: string
+        workspaceId:
+          format: UUID
+          type: string
+        status:
+          $ref: '#/components/schemas/ConnectionStatusEnum'
+        schedule:
+          $ref: '#/components/schemas/ConnectionScheduleResponse'
+        dataResidency:
+          $ref: '#/components/schemas/GeographyEnum'
+        nonBreakingSchemaUpdatesBehavior:
+          $ref: '#/components/schemas/NonBreakingSchemaUpdatesBehaviorEnum'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionEnum'
+        namespaceFormat:
+          type: string
+        prefix:
+          type: string
+        configurations:
+          $ref: '#/components/schemas/StreamConfigurations'
+        createdAt:
+          format: int64
+          type: integer
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      x-sdk-entity: Connection
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    ConnectionsResponse:
+      title: Root Type for ConnectionsResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        previous:
+          type: string
+        next:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionResponse'
+          default: []
+      example:
+        next: https://api.airbyte.com/v1/connections?limit=5&offset=10
+        previous: https://api.airbyte.com/v1/connections?limit=5&offset=0
+        data:
+        - name: test-connection
+        - connection_id: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        - sourceId: 49237019-645d-47d4-b45b-5eddf97775ce
+        - destinationId: al312fs-0ab1-4f72-9ed7-0b8fc27c5826
+        - schedule:
+            scheduleType: manual
+        - status: active
+        - dataResidency: auto
+      x-sdk-component: true
+    ConnectorDefinitionsResponse:
+      title: Root Type for DefinitionsResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorDefinitionResponse'
+      x-sdk-component: true
+    ConnectorType:
+      type: string
+      enum:
+      - source
+      - destination
+      x-sdk-component: true
+    DestinationCreateRequest:
+      required:
+      - name
+      - workspaceId
+      - configuration
+      type: object
+      properties:
+        name:
+          description: Name of the destination e.g. dev-mysql-instance.
+          type: string
+        definitionId:
+          description: The UUID of the connector definition. One of configuration.destinationType
+            or definitionId must be provided.
+          format: uuid
+          type: string
+        workspaceId:
+          format: uuid
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Destination
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    DestinationPatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Destination
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    DestinationPutRequest:
+      required:
+      - name
+      - configuration
+      type: object
+      properties:
+        name:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Destination
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    DestinationResponse:
+      title: Root Type for DestinationResponse
+      description: Provides details of a single destination.
+      type: object
+      required:
+      - destinationId
+      - name
+      - destinationType
+      - definitionId
+      - workspaceId
+      - configuration
+      - createdAt
+      properties:
+        destinationId:
+          format: UUID
+          type: string
+        name:
+          type: string
+        destinationType:
+          type: string
+        definitionId:
+          format: UUID
+          type: string
+        workspaceId:
+          format: UUID
+          type: string
+        configuration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        createdAt:
+          format: int64
+          type: integer
+      example:
+        destinationId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        name: Analytics Team Postgres
+        destinationType: postgres
+        workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+        definitionId: 321d9b60-11d1-44cb-8c92-c246d53bf98e
+      x-sdk-component: true
+    DestinationsResponse:
+      title: Root Type for DestinationsResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        previous:
+          type: string
+        next:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationResponse'
+      example:
+        next: https://api.airbyte.com/v1/destinations?limit=5&offset=10
+        previous: https://api.airbyte.com/v1/destinations?limit=5&offset=0
+        data:
+          destinationId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+          name: Analytics Team Postgres
+          destinationType: postgres
+          workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+      x-sdk-component: true
+    InitiateOauthRequest:
+      title: Root Type for initiate-oauth-post-body
+      required:
+      - redirectUrl
+      - workspaceId
+      type: object
+      properties:
+        name:
+          description: The name of the source to authenticate to. Deprecated - use
+            sourceType instead.
+          type: string
+        sourceType:
+          description: The name of the source to authenticate to
+          type: string
+        redirectUrl:
+          description: The URL to redirect the user to with the OAuth secret stored
+            in the secret_id query string parameter after authentication is complete.
+          type: string
+        workspaceId:
+          format: uuid
+          description: The workspace to create the secret and eventually the full
+            source.
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+          description: Input configuration for OAuth required by some sources.
+      example:
+        redirectUrl: https://cloud.airbyte.io/v1/api/oauth/callback
+        workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+        destinationId: 3d93b16c-ff5f-421c-8908-5a3c82088f14
+      x-sdk-component: true
+    JobCreateRequest:
+      title: Root Type for JobCreate
+      description: Creates a new Job from the configuration provided in the request
+        body.
+      required:
+      - jobType
+      - connectionId
+      type: object
+      properties:
+        connectionId:
+          format: UUID
+          type: string
+        jobType:
+          $ref: '#/components/schemas/JobTypeEnum'
+      example:
+        connectionId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        jobType: sync
+      x-sdk-component: true
+    JobResponse:
+      title: Root Type for JobResponse
+      description: Provides details of a single job.
+      required:
+      - jobId
+      - status
+      - jobType
+      - startTime
+      - connectionId
+      type: object
+      properties:
+        jobId:
+          format: int64
+          type: integer
+        status:
+          $ref: '#/components/schemas/JobStatusEnum'
+        jobType:
+          $ref: '#/components/schemas/JobTypeEnum'
+        startTime:
+          type: string
+        connectionId:
+          format: UUID
+          type: string
+        lastUpdatedAt:
+          type: string
+        duration:
+          description: Duration of a sync in ISO_8601 format
+          type: string
+        bytesSynced:
+          format: int64
+          type: integer
+        rowsSynced:
+          format: int64
+          type: integer
+      example:
+        id: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        status: running
+        jobType: sync
+        startTime: 2023-03-25 01:30:50+00:00
+        duration: PT8H6M12S
+      x-sdk-component: true
+    JobStatusEnum:
+      enum:
+      - pending
+      - running
+      - incomplete
+      - failed
+      - succeeded
+      - cancelled
+      type: string
+      x-sdk-component: true
+    JobTypeEnum:
+      description: Enum that describes the different types of jobs that the platform
+        runs.
+      enum:
+      - sync
+      - reset
+      - refresh
+      - clear
+      type: string
+      x-sdk-component: true
+    JobsResponse:
+      title: Root Type for JobsResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        previous:
+          type: string
+        next:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobResponse'
+      example:
+        next: https://api.airbyte.com/v1/jobs?limit=5&offset=10
+        previous: https://api.airbyte.com/v1/jobs?limit=5&offset=0
+        data:
+        - id: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+          status: running
+          jobType: sync
+          startTime: 2023-03-25 01:30:50+00:00
+      x-sdk-component: true
+    OrganizationsResponse:
+      title: Root Type for OrganizationsResponse
+      description: List/Array of multiple organizations.
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationResponse'
+      x-sdk-component: true
+    PermissionCreateRequest:
+      required:
+      - permissionType
+      - userId
+      type: object
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PublicPermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+      x-sdk-entity: Permission
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    PermissionResponse:
+      title: Root Type for PermissionResponse
+      description: Provides details of a single permission.
+      type: object
+      required:
+      - permissionId
+      - permissionType
+      - userId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+      x-sdk-entity: Permission
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    PermissionUpdateRequest:
+      required:
+      - permissionType
+      type: object
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+      x-sdk-entity: Permission
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    PermissionsResponse:
+      title: Root Type for PermissionsResponse
+      description: List/Array of multiple permissions
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PermissionResponseRead'
+      x-sdk-component: true
+    PublicAccessTokenResponse:
+      required:
+      - access_token
+      - token_type
+      - expires_in
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          enum:
+          - Bearer
+        expires_in:
+          type: integer
+          format: int64
+      x-sdk-component: true
+    SourceCreateRequest:
+      required:
+      - name
+      - workspaceId
+      - configuration
+      type: object
+      properties:
+        name:
+          description: Name of the source e.g. dev-mysql-instance.
+          type: string
+        definitionId:
+          description: The UUID of the connector definition. One of configuration.sourceType
+            or definitionId must be provided.
+          format: uuid
+          type: string
+        workspaceId:
+          format: uuid
+          type: string
+        configuration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        secretId:
+          description: Optional secretID obtained through the  OAuth redirect flow.
+          type: string
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Source
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    SourcePatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My source
+        workspaceId:
+          format: uuid
+          type: string
+        configuration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        secretId:
+          description: Optional secretID obtained through the  OAuth redirect flow.
+          type: string
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Source
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    SourcePutRequest:
+      required:
+      - name
+      - configuration
+      type: object
+      properties:
+        name:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/SourceConfiguration'
+      x-implements: io.airbyte.api.common.ConfigurableActor
+      x-sdk-entity: Source
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    SourceResponse:
+      title: Root Type for SourceResponse
+      description: Provides details of a single source.
+      type: object
+      required:
+      - sourceId
+      - name
+      - sourceType
+      - workspaceId
+      - configuration
+      - definitionId
+      - createdAt
+      properties:
+        sourceId:
+          format: UUID
+          type: string
+        name:
+          type: string
+        sourceType:
+          type: string
+        definitionId:
+          format: UUID
+          type: string
+        workspaceId:
+          format: UUID
+          type: string
+        configuration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        createdAt:
+          format: int64
+          type: integer
+      example:
+        sourceId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        name: Analytics Team Postgres
+        sourceType: postgres
+        workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+        definitionId: 321d9b60-11d1-44cb-8c92-c246d53bf98e
+      x-sdk-component: true
+    SourcesResponse:
+      title: Root Type for SourcesResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        previous:
+          type: string
+        next:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceResponse'
+      example:
+        next: https://api.airbyte.com/v1/sources?limit=5&offset=10
+        previous: https://api.airbyte.com/v1/sources?limit=5&offset=0
+        data:
+          sourceId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+          name: Analytics Team Postgres
+          sourceType: postgres
+          workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+      x-sdk-component: true
+    StreamPropertiesResponse:
+      description: A list of stream properties.
+      type: array
+      items:
+        $ref: '#/components/schemas/StreamProperties'
+      x-sdk-component: true
+    TagCreateRequest:
+      required:
+      - name
+      - color
+      - workspaceId
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+      x-sdk-entity: Tag
+      x-sdk-component: true
+    TagId:
+      type: string
+      format: uuid
+      x-sdk-component: true
+    TagPatchRequest:
+      required:
+      - name
+      - color
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+      x-sdk-entity: Tag
+      x-sdk-component: true
+    TagResponse:
+      title: Root Type for TagResponse
+      description: Provides details of a single tag.
+      type: object
+      required:
+      - tagId
+      - name
+      - color
+      - workspaceId
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        name:
+          type: string
+        color:
+          description: A hexadecimal color value
+          type: string
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+      example:
+        tagId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+        name: Analytics Team
+        color: FF5733
+        workspaceId: 871d9b60-11d1-44cb-8c92-c246d53bf87e
+      x-sdk-component: true
+    TagsResponse:
+      title: Root Type for TagsResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponse'
+      x-sdk-component: true
+    UsersResponse:
+      title: Root Type for UsersResponse
+      description: List/Array of multiple users in an organization
+      required:
+      - data
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+      x-sdk-component: true
+      x-sdk-entity: User
+      x-sdk-param-suppress-computed-diff: true
+    WorkspaceCreateRequest:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          description: Name of the workspace
+          type: string
+        organizationId:
+          description: ID of organization to add workspace to.
+          format: uuid
+          type: string
+        notifications:
+          $ref: '#/components/schemas/NotificationsConfig'
+      x-sdk-entity: Workspace
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    WorkspaceOAuthCredentialsRequest:
+      title: Root Type for WorkspaceOAuthCredentials
+      description: POST body for creating/updating workspace level OAuth credentials
+      required:
+      - actorType
+      - name
+      - configuration
+      type: object
+      properties:
+        actorType:
+          $ref: '#/components/schemas/ActorTypeEnum'
+        name:
+          type: string
+          description: The name of the source i.e. google-ads
+        configuration:
+          $ref: '#/components/schemas/OAuthCredentialsConfiguration'
+      x-sdk-component: true
+    WorkspaceResponse:
+      title: Root Type for WorkspaceResponse
+      description: Provides details of a single workspace.
+      type: object
+      required:
+      - workspaceId
+      - name
+      - dataResidency
+      - notifications
+      properties:
+        workspaceId:
+          format: UUID
+          type: string
+        name:
+          type: string
+        dataResidency:
+          $ref: '#/components/schemas/GeographyEnum'
+        notifications:
+          $ref: '#/components/schemas/NotificationsConfig'
+      x-sdk-entity: Workspace
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    WorkspaceUpdateRequest:
+      type: object
+      properties:
+        name:
+          description: Name of the workspace
+          type: string
+        notifications:
+          $ref: '#/components/schemas/NotificationsConfig'
+      x-sdk-entity: Workspace
+      x-sdk-param-suppress-computed-diff: true
+      x-sdk-component: true
+    WorkspacesResponse:
+      title: Root Type for WorkspacesResponse
+      description: ''
+      required:
+      - data
+      type: object
+      properties:
+        previous:
+          type: string
+        next:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceResponse'
+      example:
+        next: https://api.airbyte.com/v1/workspaces?limit=5&offset=10
+        previous: https://api.airbyte.com/v1/workspaces?limit=5&offset=0
+        data:
+          workspaceId: 18dccc91-0ab1-4f72-9ed7-0b8fc27c5826
+          name: Acme Company
+          dataResidency: auto
+      x-sdk-component: true
+  responses:
+    InvalidInputResponse:
+      description: Input failed validation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvalidInputExceptionInfo'
+    NotFoundResponse:
+      description: Object with given id was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundKnownExceptionInfo'
+    ExceptionResponse:
+      description: Exception occurred; see message for details.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KnownExceptionInfo'
+    ForbiddenResponse:
+      description: Operation forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KnownExceptionInfo'
+    InitiateOauthResponse:
+      content:
+        application/json: {}
+      description: Response from the initiate OAuth call should be an object with
+        a single property which will be the `redirect_url`. If a user is redirected
+        to this URL, they'll be prompted by the identity provider to authenticate.
+      x-sdk-component: true

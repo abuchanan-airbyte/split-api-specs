@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  title: User invitations API
+  version: 1.0.0
+paths:
+  /v1/user_invitations/create:
+    post:
+      summary: Create a user invitation
+      tags:
+      - user_invitation
+      operationId: createUserInvitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInvitationCreateRequestBody'
+      responses:
+        '201':
+          description: Successfully processed user invitation create request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInvitationCreateResponse'
+  /v1/user_invitations/by_code/{inviteCode}:
+    get:
+      summary: Get a user invitation by its unique code (not primary key ID)
+      tags:
+      - user_invitation
+      operationId: getUserInvitation
+      parameters:
+      - name: inviteCode
+        in: path
+        description: The invite code of the user invitation to get.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully retrieved user invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInvitationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/user_invitations/list_pending:
+    post:
+      summary: List pending invitations
+      tags:
+      - user_invitation
+      operationId: listPendingInvitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInvitationListRequestBody'
+      responses:
+        '200':
+          description: A list of pending user invitations, or an empty list if no
+            invitations are found.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInvitationRead'
+  /v1/user_invitations/accept:
+    post:
+      summary: Accept a user invitation
+      tags:
+      - user_invitation
+      operationId: acceptUserInvitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteCodeRequestBody'
+      responses:
+        '201':
+          description: Successfully accepted user invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInvitationRead'
+  /v1/user_invitations/decline:
+    post:
+      summary: Decline a user invitation
+      tags:
+      - user_invitation
+      operationId: declineUserInvitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteCodeRequestBody'
+      responses:
+        '201':
+          description: Successfully declined user invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInvitationRead'
+  /v1/user_invitations/cancel:
+    post:
+      summary: Cancel a user invitation
+      tags:
+      - user_invitation
+      operationId: cancelUserInvitation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteCodeRequestBody'
+      responses:
+        '201':
+          description: Successfully cancelled user invitation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInvitationRead'
+components:
+  schemas:
+    InviteCodeRequestBody:
+      type: object
+      required:
+      - inviteCode
+      properties:
+        inviteCode:
+          type: string
+    UserInvitationCreateRequestBody:
+      type: object
+      required:
+      - invitedEmail
+      - permissionType
+      - scopeType
+      - scopeId
+      properties:
+        invitedEmail:
+          type: string
+          format: email
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    UserInvitationCreateResponse:
+      type: object
+      properties:
+        inviteCode:
+          type: string
+          description: The created invite code, if the request resulted in a new invitation
+            being created.
+        directlyAdded:
+          type: boolean
+          description: True if the request resulted in the user being directly added,
+            without a created invitation.
+    UserInvitationListRequestBody:
+      type: object
+      required:
+      - scopeType
+      - scopeId
+      properties:
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeId:
+          type: string
+          format: uuid
+    UserInvitationRead:
+      type: object
+      required:
+      - id
+      - inviteCode
+      - inviterUserId
+      - invitedEmail
+      - scopeId
+      - scopeType
+      - permissionType
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        inviteCode:
+          type: string
+        inviterUserId:
+          type: string
+          format: uuid
+        invitedEmail:
+          type: string
+          format: email
+        scopeId:
+          type: string
+          format: uuid
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        status:
+          $ref: '#/components/schemas/UserInvitationStatus'
+        createdAt:
+          type: integer
+          format: int64
+        updatedAt:
+          type: integer
+          format: int64
+  responses: {}

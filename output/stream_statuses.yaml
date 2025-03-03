@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: Stream statuses API
+  version: 1.0.0
+paths:
+  /v1/stream_statuses/list:
+    post:
+      summary: Gets a list of stream statuses filtered by parameters (with AND semantics).
+      tags:
+      - stream_statuses
+      - streams
+      operationId: getStreamStatuses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamStatusListRequestBody'
+      responses:
+        '200':
+          description: Successfully queried stream statuses.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamStatusReadList'
+  /v1/stream_statuses/latest_per_run_state:
+    post:
+      summary: Gets a list of the latest stream status for each stream and run state
+        for a connection.
+      tags:
+      - stream_statuses
+      - streams
+      operationId: getStreamStatusesByRunState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+      responses:
+        '200':
+          description: Successfully queried stream statuses.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamStatusReadList'
+  /v1/stream_statuses/create:
+    post:
+      summary: Creates a stream status.
+      tags:
+      - stream_statuses
+      - streams
+      operationId: createStreamStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamStatusCreateRequestBody'
+      responses:
+        '201':
+          description: Successfully created stream status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamStatusRead'
+  /v1/stream_statuses/update:
+    post:
+      summary: Updates a stream status.
+      tags:
+      - stream_statuses
+      - streams
+      operationId: updateStreamStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StreamStatusUpdateRequestBody'
+      responses:
+        '201':
+          description: Successfully created stream status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamStatusRead'
+        '200':
+          description: Successfully updated stream status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamStatusRead'
+components:
+  schemas:
+    StreamStatusCreateRequestBody:
+      type: object
+      required:
+      - attemptNumber
+      - connectionId
+      - jobId
+      - jobType
+      - runState
+      - streamName
+      - transitionedAt
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        incompleteRunCause:
+          $ref: '#/components/schemas/StreamStatusIncompleteRunCause'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        runState:
+          $ref: '#/components/schemas/StreamStatusRunState'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        transitionedAt:
+          type: integer
+          format: int64
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        metadata:
+          $ref: '#/components/schemas/StreamStatusRateLimitedMetadata'
+    StreamStatusListRequestBody:
+      type: object
+      required:
+      - pagination
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    StreamStatusRead:
+      type: object
+      required:
+      - attemptNumber
+      - connectionId
+      - id
+      - jobId
+      - jobType
+      - runState
+      - streamName
+      - transitionedAt
+      - workspaceId
+      properties:
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        id:
+          $ref: '#/components/schemas/StreamStatusId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        incompleteRunCause:
+          $ref: '#/components/schemas/StreamStatusIncompleteRunCause'
+        jobType:
+          $ref: '#/components/schemas/StreamStatusJobType'
+        runState:
+          $ref: '#/components/schemas/StreamStatusRunState'
+        streamName:
+          type: string
+        streamNamespace:
+          type: string
+        transitionedAt:
+          type: integer
+          format: int64
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        metadata:
+          $ref: '#/components/schemas/StreamStatusRateLimitedMetadata'
+    StreamStatusReadList:
+      type: object
+      properties:
+        streamStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamStatusRead'
+    StreamStatusUpdateRequestBody:
+      allOf:
+      - $ref: '#/components/schemas/StreamStatusCreateRequestBody'
+      - type: object
+        required:
+        - id
+        properties:
+          id:
+            $ref: '#/components/schemas/StreamStatusId'
+  responses: {}

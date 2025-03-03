@@ -1,0 +1,113 @@
+openapi: 3.0.0
+info:
+  title: State API
+  version: 1.0.0
+paths:
+  /v1/state/get:
+    post:
+      tags:
+      - state
+      summary: Fetch the current state for a connection.
+      operationId: getState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionState'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/state/create_or_update:
+    post:
+      tags:
+      - state
+      - internal
+      summary: Create or update the state for a connection.
+      operationId: createOrUpdateState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStateCreateOrUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionState'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/state/create_or_update_safe:
+    post:
+      tags:
+      - state
+      summary: Create or update the state for a connection. Throws error if a sync
+        is currently running when this is called.
+      operationId: createOrUpdateStateSafe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStateCreateOrUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionState'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+        '423':
+          $ref: '#/components/responses/ExceptionResponse'
+components:
+  schemas:
+    ConnectionState:
+      type: object
+      description: Contains the state for a connection. The stateType field identifies
+        what type of state it is. Only the field corresponding to that type will be
+        set, the rest will be null. If stateType=not_set, then none of the fields
+        will be set.
+      required:
+      - connectionId
+      - stateType
+      properties:
+        stateType:
+          $ref: '#/components/schemas/ConnectionStateType'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        state:
+          $ref: '#/components/schemas/StateBlob'
+        streamState:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamState'
+        globalState:
+          $ref: '#/components/schemas/GlobalState'
+    ConnectionStateCreateOrUpdate:
+      type: object
+      required:
+      - connectionId
+      - connectionState
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        connectionState:
+          $ref: '#/components/schemas/ConnectionState'
+  responses: {}

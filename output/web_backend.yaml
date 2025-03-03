@@ -1,0 +1,607 @@
+openapi: 3.0.0
+info:
+  title: Web backend API
+  version: 1.0.0
+paths:
+  /v1/web_backend/check_updates:
+    post:
+      tags:
+      - web_backend
+      summary: Returns a summary of source and destination definitions that could
+        be updated.
+      operationId: webBackendCheckUpdates
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendCheckUpdatesRead'
+  /v1/web_backend/mappers/validate:
+    post:
+      tags:
+      - web_backend
+      summary: Validates a draft set of mappers against a connection's configured
+        streams
+      operationId: webBackendValidateMappers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendValidateMappersRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendValidateMappersResponse'
+  /v1/web_backend/connections/list:
+    post:
+      tags:
+      - web_backend
+      summary: Returns all non-deleted connections for a workspace.
+      operationId: webBackendListConnectionsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendConnectionListRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendConnectionReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/connections/get:
+    post:
+      tags:
+      - web_backend
+      summary: Get a connection
+      operationId: webBackendGetConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendConnectionRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/connections/create:
+    post:
+      tags:
+      - web_backend
+      summary: Create a connection
+      operationId: webBackendCreateConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendConnectionCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/connections/update:
+    post:
+      tags:
+      - web_backend
+      summary: Update a connection
+      description: 'Apply a patch-style update to a connection. Only fields present
+        on the update request body will be updated.
+
+        Any operations that lack an ID will be created. Then, the newly created operationId
+        will be applied to the
+
+        connection along with the rest of the operationIds in the request body.
+
+        Apply a patch-style update to a connection. Only fields present on the update
+        request body will be updated.
+
+        Note that if a catalog is present in the request body, the connection''s entire
+        catalog will be replaced
+
+        with the catalog from the request. This means that to modify a single stream,
+        the entire new catalog
+
+        containing the updated stream needs to be sent.
+
+        '
+      operationId: webBackendUpdateConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendConnectionUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/describe_cron_expression:
+    post:
+      tags:
+      - web_backend
+      summary: Returns a human-readable description of a CronTrigger expression
+      description: Pass a Quartz CronTrigger expression to be validated and turned
+        into a human-readable description.
+      operationId: webBackendDescribeCronExpression
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendDescribeCronExpressionRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendCronExpressionDescription'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/state/get_type:
+    post:
+      tags:
+      - web_backend
+      summary: Fetch the current state type for a connection.
+      operationId: getStateType
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionStateType'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/workspace/state:
+    post:
+      tags:
+      - web_backend
+      summary: Returns the current state of a workspace
+      operationId: webBackendGetWorkspaceState
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebBackendWorkspaceState'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendWorkspaceStateResult'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/web_backend/geographies/list:
+    post:
+      tags:
+      - web_backend
+      description: Returns all available geographies in which a data sync can run.
+      summary: 'Returns available geographies can be selected to run data syncs in
+        a particular geography.
+
+        The ''auto'' entry indicates that the sync will be automatically assigned
+        to a geography according
+
+        to the platform default behavior. Entries other than ''auto'' are two-letter
+        country codes that
+
+        follow the ISO 3166-1 alpha-2 standard.
+
+        '
+      operationId: webBackendListGeographies
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebBackendGeographiesListResult'
+components:
+  schemas:
+    ConnectionStateType:
+      type: string
+      enum:
+      - global
+      - stream
+      - legacy
+      - not_set
+    WebBackendCheckUpdatesRead:
+      type: object
+      description: Summary of source and destination definitions that could be updated
+      required:
+      - destinationDefinitions
+      - sourceDefinitions
+      properties:
+        destinationDefinitions:
+          type: integer
+        sourceDefinitions:
+          type: integer
+    WebBackendConnectionCreate:
+      type: object
+      required:
+      - sourceId
+      - destinationId
+      - status
+      properties:
+        name:
+          type: string
+          description: Optional name of the connection
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationCreate'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendConnectionListRequestBody:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceId:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceId'
+        destinationId:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationId'
+    WebBackendConnectionRead:
+      type: object
+      required:
+      - connectionId
+      - name
+      - sourceId
+      - destinationId
+      - syncCatalog
+      - status
+      - source
+      - destination
+      - isSyncing
+      - schemaChange
+      - notifySchemaChanges
+      - notifySchemaChangesByEmail
+      - nonBreakingChangesPreference
+      - sourceActorDefinitionVersion
+      - destinationActorDefinitionVersion
+      - tags
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        source:
+          $ref: '#/components/schemas/SourceRead'
+        destination:
+          $ref: '#/components/schemas/DestinationRead'
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationRead'
+        latestSyncJobCreatedAt:
+          $ref: '#/components/schemas/JobCreatedAt'
+        latestSyncJobStatus:
+          $ref: '#/components/schemas/JobStatus'
+        isSyncing:
+          type: boolean
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        catalogId:
+          type: string
+          format: uuid
+        catalogDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+        geography:
+          $ref: '#/components/schemas/Geography'
+        schemaChange:
+          $ref: '#/components/schemas/SchemaChange'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        createdAt:
+          type: integer
+          format: int64
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        sourceActorDefinitionVersion:
+          $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        destinationActorDefinitionVersion:
+          $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendConnectionReadList:
+      type: object
+      required:
+      - connections
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebBackendConnectionListItem'
+    WebBackendConnectionRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        withRefreshedCatalog:
+          type: boolean
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    WebBackendConnectionUpdate:
+      type: object
+      description: Used to apply a patch-style update to a connection, which means
+        that null properties remain unchanged
+      required:
+      - connectionId
+      properties:
+        name:
+          type: string
+          description: Name that will be set to the connection
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        skipReset:
+          type: boolean
+        operations:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/WebBackendOperationCreateOrUpdate'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Tag'
+    WebBackendCronExpressionDescription:
+      type: object
+      required:
+      - cronExpression
+      - description
+      - nextExecutions
+      properties:
+        cronExpression:
+          type: string
+        description:
+          type: string
+        nextExecutions:
+          type: array
+          description: Array of Unix timestamps for the next execution times
+          items:
+            type: integer
+            format: int64
+            description: Unix timestamp of a scheduled execution
+    WebBackendDescribeCronExpressionRequestBody:
+      type: object
+      required:
+      - cronExpression
+      properties:
+        cronExpression:
+          type: string
+    WebBackendGeographiesListResult:
+      type: object
+      required:
+      - geographies
+      properties:
+        geographies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Geography'
+    WebBackendValidateMappersRequestBody:
+      type: object
+      required:
+      - connectionId
+      - mappers
+      - streamDescriptor
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        streamDescriptor:
+          $ref: '#/components/schemas/StreamDescriptor'
+        mappers:
+          description: Mappers that should be applied to the stream before writing
+            to the destination.
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfiguredStreamMapper'
+    WebBackendValidateMappersResponse:
+      type: object
+      required:
+      - initialFields
+      - outputFields
+      - mappers
+      properties:
+        initialFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSpec'
+        outputFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSpec'
+        mappers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapperValidationResult'
+    WebBackendWorkspaceState:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    WebBackendWorkspaceStateResult:
+      type: object
+      required:
+      - hasConnections
+      - hasSources
+      - hasDestinations
+      properties:
+        hasConnections:
+          type: boolean
+        hasSources:
+          type: boolean
+        hasDestinations:
+          type: boolean
+  responses: {}

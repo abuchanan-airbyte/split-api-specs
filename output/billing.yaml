@@ -1,0 +1,286 @@
+openapi: 3.0.0
+info:
+  title: Billing API
+  version: 1.0.0
+paths:
+  /v1/billing/customer_portal:
+    post:
+      summary: Get a link to the customer portal
+      tags:
+      - billing
+      - cloud-only
+      operationId: getCustomerPortalLink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerPortalRequestBody'
+      responses:
+        '200':
+          description: Successfully got customer portal session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerPortalRead'
+  /v1/billing/handle_webhook:
+    post:
+      summary: Handle an external billing event (ie a webhook from an external payment
+        provider service)
+      tags:
+      - billing
+      - cloud-only
+      operationId: handleWebhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingEvent'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid payload
+        '401':
+          description: Invalid signature
+      security: []
+  /v1/billing/list_invoices:
+    post:
+      summary: Get a list of past invoices of the customer
+      tags:
+      - billing
+      - cloud-only
+      operationId: listPastInvoices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved list of invoices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListInvoicesRead'
+  /v1/billing/payment_information:
+    post:
+      summary: Get a summary of payment information for a specific organization
+      tags:
+      - billing
+      - cloud-only
+      operationId: getPaymentInformation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully got organization's payment information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformationRead'
+  /v1/billing/subscription_info:
+    post:
+      summary: Get the current information about the organization's subscription
+      tags:
+      - billing
+      - cloud-only
+      operationId: getSubscriptionInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully got organization subscription info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationSubscriptionInfoRead'
+  /v1/billing/trial_status:
+    post:
+      summary: Get the current trial status of an organization
+      tags:
+      - billing
+      - cloud-only
+      operationId: getOrganizationTrialStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved the trial status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationTrialStatusRead'
+  /v1/billing/cancel_subscription:
+    post:
+      summary: Schedule canceling the subscription of an organization
+      tags:
+      - billing
+      - cloud-only
+      operationId: cancelSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully scheduled cancelation of the subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelSubscriptionRead'
+  /v1/billing/unschedule_cancel_subscription:
+    post:
+      summary: Unschedule a scheduled cancelation of the subscription of an organization
+      tags:
+      - billing
+      - cloud-only
+      operationId: unscheduleCancelSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '204':
+          description: Successfully unscheduled cancelation of the subscription
+components:
+  schemas:
+    BillingEvent:
+      description: Generic event for billing, mapped to a JsonNode
+      type: object
+      additionalProperties: true
+    CancelSubscriptionRead:
+      type: object
+      required:
+      - subscriptionEndsAt
+      properties:
+        subscriptionEndsAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+    CustomerPortalRead:
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+    CustomerPortalRequestBody:
+      type: object
+      required:
+      - organizationId
+      - returnUrl
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        returnUrl:
+          type: string
+        flow:
+          type: string
+          enum:
+          - portal
+          - payment_method
+          - setup
+          default: portal
+    ListInvoicesRead:
+      type: object
+      required:
+      - invoices
+      - hasMore
+      properties:
+        invoices:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceRead'
+        hasMore:
+          type: boolean
+    OrganizationSubscriptionInfoRead:
+      type: object
+      required:
+      - name
+      - selfServeSubscription
+      - balanceHidden
+      properties:
+        name:
+          type: string
+        selfServeSubscription:
+          type: boolean
+        cancellationDate:
+          $ref: '#/components/schemas/ISO8601DateTime'
+        balanceHidden:
+          description: Whether the organization balance is hidden and should not be
+            shown to the user.
+          type: boolean
+        upcomingInvoice:
+          type: object
+          description: Describe the current state of the upcoming invoice. If `hidden`
+            is `true`, this will be `null`, since no balance should be shown.
+          required:
+          - currency
+          - amount
+          - dueDate
+          properties:
+            currency:
+              type: string
+            amount:
+              type: string
+              description: The amount of the next upcoming invoice formatted as a
+                decimal number wrapped inside a string.
+            dueDate:
+              $ref: '#/components/schemas/LocalDate'
+        credits:
+          type: object
+          required:
+          - balance
+          - blocks
+          properties:
+            balance:
+              type: number
+              format: double
+            blocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreditBlockRead'
+    OrganizationTrialStatusRead:
+      type: object
+      required:
+      - trialStatus
+      properties:
+        trialStatus:
+          type: string
+          description: Indicates the status of the trial for an organization
+          enum:
+          - pre_trial
+          - in_trial
+          - post_trial
+          x-enum-descriptions:
+          - The trial has not yet started for this organization
+          - The organization is currently in the trial. End of the trial is indicated
+            by the `trialEndsAt` property
+          - The organization has left the trial already
+        trialEndsAt:
+          $ref: '#/components/schemas/ISO8601DateTime'
+    PaymentInformationRead:
+      type: object
+      properties:
+        customer:
+          type: object
+          properties:
+            email:
+              type: string
+            customerAddress:
+              $ref: '#/components/schemas/AddressRead'
+            shippingAddress:
+              $ref: '#/components/schemas/AddressRead'
+            defaultPaymentMethod:
+              $ref: '#/components/schemas/PaymentMethodRead'
+  responses: {}

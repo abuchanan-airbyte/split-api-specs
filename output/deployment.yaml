@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  title: Deployment API
+  version: 1.0.0
+paths:
+  /v1/deployment/metadata:
+    post:
+      summary: Provides the Airbyte deployment metadata.
+      tags:
+      - deployment_metadata
+      operationId: getDeploymentMetadata
+      responses:
+        '200':
+          description: The Airbyte deployment metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentMetadataRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+components:
+  schemas:
+    DeploymentMetadataRead:
+      type: object
+      required:
+      - id
+      - mode
+      - version
+      properties:
+        id:
+          type: string
+          format: uuid
+        mode:
+          type: string
+        version:
+          type: string
+  responses: {}

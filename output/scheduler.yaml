@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Scheduler API
+  version: 1.0.0
+paths:
+  /v1/scheduler/sources/check_connection:
+    post:
+      tags:
+      - scheduler
+      summary: Run check connection for a given source configuration
+      operationId: executeSourceCheckConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceCoreConfig'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/scheduler/sources/discover_schema:
+    post:
+      tags:
+      - scheduler
+      summary: Run discover schema for a given source a source configuration
+      operationId: executeSourceDiscoverSchema
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceCoreConfig'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDiscoverSchemaRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/scheduler/destinations/check_connection:
+    post:
+      tags:
+      - scheduler
+      summary: Run check connection for a given destination configuration
+      operationId: executeDestinationCheckConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationCoreConfig'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    DestinationCoreConfig:
+      type: object
+      required:
+      - workspaceId
+      - destinationDefinitionId
+      - connectionConfiguration
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    SourceCoreConfig:
+      type: object
+      required:
+      - sourceDefinitionId
+      - connectionConfiguration
+      - workspaceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+  responses: {}

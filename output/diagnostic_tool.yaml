@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Diagnostic tool API
+  version: 1.0.0
+paths:
+  /v1/diagnostic_tool/generate_report:
+    post:
+      summary: Generate a diagnostic report
+      tags:
+      - diagnostic_tool
+      operationId: generateDiagnosticReport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiagnosticReportRequestBody'
+      responses:
+        '200':
+          description: Successfully generated diagnostic report
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    DiagnosticReportRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+  responses: {}

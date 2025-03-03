@@ -1,0 +1,386 @@
+openapi: 3.0.0
+info:
+  title: Destinations API
+  version: 1.0.0
+paths:
+  /v1/destinations/create:
+    post:
+      tags:
+      - destination
+      summary: Create a destination
+      operationId: createDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/update:
+    post:
+      tags:
+      - destination
+      summary: Update a destination
+      operationId: updateDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/partial_update:
+    post:
+      tags:
+      - destination
+      summary: Update a destination partially
+      operationId: partialUpdateDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialDestinationUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/upgrade_version:
+    post:
+      tags:
+      - destination
+      summary: Upgrade a destination to the latest version
+      operationId: upgradeDestinationVersion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/destinations/list:
+    post:
+      tags:
+      - destination
+      summary: List configured destinations for a workspace
+      operationId: listDestinationsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/list_paginated:
+    post:
+      tags:
+      - destination
+      summary: List configured destinations for a workspace. Pginated
+      operationId: listDestinationsForWorkspacesPaginated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListResourcesForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/get:
+    post:
+      tags:
+      - destination
+      summary: Get configured destination
+      operationId: getDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/search:
+    post:
+      tags:
+      - destination
+      summary: Search destinations
+      operationId: searchDestinations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationSearch'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationReadList'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/check_connection:
+    post:
+      tags:
+      - destination
+      summary: Check connection to the destination
+      operationId: checkConnectionToDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/check_connection_for_update:
+    post:
+      tags:
+      - destination
+      summary: Check connection for a proposed update to a destination
+      operationId: checkConnectionToDestinationForUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/delete:
+    post:
+      tags:
+      - destination
+      summary: Delete the destination
+      operationId: deleteDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destinations/clone:
+    post:
+      tags:
+      - destination
+      summary: Clone destination
+      operationId: cloneDestination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationCloneRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    DestinationCloneRequestBody:
+      description: The values required to configure the destination. The schema for
+        this should have an id of the existing destination along with the configuration
+        you want to change in case.
+      type: object
+      required:
+      - destinationCloneId
+      properties:
+        destinationCloneId:
+          $ref: '#/components/schemas/DestinationId'
+        destinationConfiguration:
+          $ref: '#/components/schemas/DestinationCloneConfiguration'
+    DestinationCreate:
+      type: object
+      required:
+      - name
+      - workspaceId
+      - destinationDefinitionId
+      - connectionConfiguration
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - destinationId
+      - workspaceId
+      - connectionConfiguration
+      - name
+      - destinationName
+      - createdAt
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        destinationName:
+          type: string
+        icon:
+          type: string
+        isVersionOverrideApplied:
+          type: boolean
+        isEntitled:
+          type: boolean
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        status:
+          $ref: '#/components/schemas/ActorStatus'
+        createdAt:
+          type: integer
+          format: int64
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    DestinationReadList:
+      type: object
+      required:
+      - destinations
+      properties:
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationRead'
+    DestinationSearch:
+      type: object
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        destinationName:
+          type: string
+    DestinationUpdate:
+      type: object
+      required:
+      - destinationId
+      - connectionConfiguration
+      - name
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    PartialDestinationUpdate:
+      type: object
+      properties:
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/DestinationConfiguration'
+        name:
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+  responses: {}

@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+  title: Instance configuration API
+  version: 1.0.0
+paths:
+  /v1/instance_configuration:
+    get:
+      tags:
+      - instance_configuration
+      summary: Get instance configuration
+      operationId: getInstanceConfiguration
+      responses:
+        '200':
+          description: Successfully returned instance configuration.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceConfigurationResponse'
+        '401':
+          description: Fetching instance configuration failed.
+  /v1/instance_configuration/setup:
+    post:
+      summary: Setup an instance with user and organization information.
+      tags:
+      - instance_configuration
+      operationId: setupInstanceConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceConfigurationSetupRequestBody'
+      responses:
+        '200':
+          description: Successfully setup instance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceConfigurationResponse'
+        '401':
+          description: Instance setup failed.
+  /v1/instance_configuration/license/info:
+    get:
+      summary: Fetch license limits and usage
+      tags:
+      - instance_configuration
+      operationId: licenseInfo
+      responses:
+        '200':
+          description: Successfully retrieve license usage information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LicenseInfoResponse'
+components:
+  schemas:
+    InstanceConfigurationResponse:
+      type: object
+      required:
+      - airbyteUrl
+      - auth
+      - defaultOrganizationId
+      - defaultOrganizationEmail
+      - defaultUserId
+      - defaultWorkspaceId
+      - edition
+      - initialSetupComplete
+      - trackingStrategy
+      - version
+      - licenseStatus
+      properties:
+        edition:
+          type: string
+          enum:
+          - community
+          - pro
+          - enterprise
+          - trial
+        version:
+          description: release version for the corresponding edition
+          type: string
+        licenseStatus:
+          $ref: '#/components/schemas/LicenseStatus'
+        licenseExpirationDate:
+          type: integer
+          format: int64
+          nullable: true
+        auth:
+          $ref: '#/components/schemas/AuthConfiguration'
+        airbyteUrl:
+          type: string
+        initialSetupComplete:
+          type: boolean
+        defaultUserId:
+          type: string
+          format: uuid
+        defaultOrganizationId:
+          type: string
+          format: uuid
+        defaultOrganizationEmail:
+          type: string
+          format: email
+        defaultWorkspaceId:
+          type: string
+          format: uuid
+        trackingStrategy:
+          type: string
+          enum:
+          - logging
+          - segment
+    InstanceConfigurationSetupRequestBody:
+      type: object
+      required:
+      - email
+      - anonymousDataCollection
+      - initialSetupComplete
+      - displaySetupWizard
+      properties:
+        email:
+          type: string
+        anonymousDataCollection:
+          type: boolean
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        userName:
+          description: Optional name of the user to create. Defaults to 'Default User'
+            if not specified.
+          type: string
+        organizationName:
+          description: Optional name of the organization to create. Defaults to 'Default
+            Organization' if not specified.
+          type: string
+    LicenseInfoResponse:
+      type: object
+      required:
+      - edition
+      - licenseStatus
+      - usedEditors
+      - expirationDate
+      properties:
+        edition:
+          type: string
+        licenseStatus:
+          $ref: '#/components/schemas/LicenseStatus'
+        maxNodes:
+          type: integer
+        maxEditors:
+          type: integer
+        usedNodes:
+          type: integer
+        usedEditors:
+          type: integer
+        expirationDate:
+          type: integer
+          format: int64
+  responses: {}

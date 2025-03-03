@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Signal API
+  version: 1.0.0
+paths:
+  /v1/signal:
+    post:
+      tags:
+      - signal
+      summary: Signal that an operation is terminal
+      operationId: signal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignalInput'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    SignalInput:
+      type: object
+      required:
+      - workflowType
+      - workflowId
+      properties:
+        workflowType:
+          type: string
+        workflowId:
+          type: string
+  responses: {}

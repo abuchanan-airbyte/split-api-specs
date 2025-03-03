@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: Notifications API
+  version: 1.0.0
+paths:
+  /v1/notifications/try:
+    post:
+      tags:
+      - notifications
+      summary: Try sending a notifications; to be deprecated
+      operationId: tryNotificationConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/notifications/try_webhook:
+    post:
+      tags:
+      - notifications
+      summary: Try sending a notifications to webhook
+      operationId: tryNotificationWebhookConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationWebhookConfigValidationRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    Notification:
+      type: object
+      required:
+      - notificationType
+      - sendOnSuccess
+      - sendOnFailure
+      properties:
+        notificationType:
+          $ref: '#/components/schemas/NotificationType'
+        sendOnSuccess:
+          type: boolean
+          default: false
+        sendOnFailure:
+          type: boolean
+          default: true
+        slackConfiguration:
+          $ref: '#/components/schemas/SlackNotificationConfiguration'
+        customerioConfiguration:
+          $ref: '#/components/schemas/CustomerioNotificationConfiguration'
+    NotificationRead:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+    NotificationWebhookConfigValidationRequestBody:
+      type: object
+      required:
+      - NotificationTrigger
+      - slackConfiguration
+      properties:
+        slackConfiguration:
+          $ref: '#/components/schemas/SlackNotificationConfiguration'
+        notificationTrigger:
+          $ref: '#/components/schemas/NotificationTrigger'
+  responses: {}

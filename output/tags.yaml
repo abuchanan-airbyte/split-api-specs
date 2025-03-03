@@ -1,0 +1,147 @@
+openapi: 3.0.0
+info:
+  title: Tags API
+  version: 1.0.0
+paths:
+  /v1/tags/list:
+    post:
+      summary: List tags in a workspace
+      tags:
+      - tag
+      operationId: listTags
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagListRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved list of tags.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+  /v1/tags/update:
+    post:
+      summary: Update a tag
+      tags:
+      - tag
+      operationId: updateTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagUpdateRequestBody'
+      responses:
+        '200':
+          description: Successfully updated tag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+  /v1/tags/delete:
+    post:
+      summary: Delete a tag
+      tags:
+      - tag
+      operationId: deleteTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagDeleteRequestBody'
+      responses:
+        '200':
+          description: Successfully deleted tag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+  /v1/tags/create:
+    post:
+      summary: Create a tag
+      tags:
+      - tag
+      operationId: createTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreateRequestBody'
+      responses:
+        '200':
+          description: Successfully created tag.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+components:
+  schemas:
+    Tag:
+      description: A tag that can be associated with a connection. Useful for grouping
+        and organizing connections in a workspace.
+      type: object
+      x-sdk-component: true
+      required:
+      - tagId
+      - workspaceId
+      - name
+      - color
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+    TagCreateRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - name
+      - color
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+    TagDeleteRequestBody:
+      type: object
+      required:
+      - tagId
+      - workspaceId
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    TagListRequestBody:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    TagUpdateRequestBody:
+      type: object
+      required:
+      - tagId
+      - workspaceId
+      - name
+      - color
+      properties:
+        tagId:
+          $ref: '#/components/schemas/TagId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        color:
+          type: string
+  responses: {}

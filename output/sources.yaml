@@ -1,0 +1,560 @@
+openapi: 3.0.0
+info:
+  title: Sources API
+  version: 1.0.0
+paths:
+  /v1/sources/create:
+    post:
+      tags:
+      - source
+      summary: Create a source
+      operationId: createSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/update:
+    post:
+      tags:
+      - source
+      summary: Update a source
+      operationId: updateSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/partial_update:
+    post:
+      tags:
+      - source
+      summary: Partially update a source
+      operationId: partialUpdateSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialSourceUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/upgrade_version:
+    post:
+      tags:
+      - source
+      summary: Upgrade a source to the latest version
+      operationId: upgradeSourceVersion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/sources/list:
+    post:
+      tags:
+      - source
+      summary: List sources for workspace
+      description: List sources for workspace. Does not return deleted sources.
+      operationId: listSourcesForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/list_paginated:
+    post:
+      tags:
+      - source
+      summary: List sources for workspace
+      description: List sources for workspace. Does not return deleted sources. Paginated.
+      operationId: listSourcesForWorkspacePaginated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListResourcesForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/get:
+    post:
+      tags:
+      - source
+      summary: Get source
+      operationId: getSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/most_recent_source_actor_catalog:
+    post:
+      tags:
+      - source
+      summary: Get most recent ActorCatalog for source
+      operationId: getMostRecentSourceActorCatalog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorCatalogWithUpdatedAt'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/search:
+    post:
+      tags:
+      - source
+      summary: Search sources
+      operationId: searchSources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceSearch'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceReadList'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/clone:
+    post:
+      tags:
+      - source
+      summary: Clone source
+      operationId: cloneSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceCloneRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/delete:
+    post:
+      tags:
+      - source
+      summary: Delete a source
+      operationId: deleteSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/check_connection:
+    post:
+      tags:
+      - source
+      summary: Check connection to the source
+      operationId: checkConnectionToSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/check_connection_for_update:
+    post:
+      tags:
+      - source
+      summary: Check connection for a proposed update to a source
+      operationId: checkConnectionToSourceForUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/discover_schema:
+    post:
+      tags:
+      - source
+      summary: Discover the schema catalog of the source
+      operationId: discoverSchemaForSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDiscoverSchemaRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDiscoverSchemaRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/apply_schema_changes:
+    post:
+      tags:
+      - source
+      summary: Auto propagate the change on a catalog to a catalog saved in the DB.
+        It will fetch all the connections linked to a source id and apply the provided
+        diff to their catalog.
+      operationId: applySchemaChangeForSource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceAutoPropagateChange'
+        required: true
+      responses:
+        '204':
+          description: The schema was properly auto propagate
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/sources/write_discover_catalog_result:
+    post:
+      tags:
+      - source
+      - internal
+      summary: Should only called from worker, to write result from discover activity
+        back to DB.
+      operationId: writeDiscoverCatalogResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDiscoverSchemaWriteRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoverCatalogResult'
+components:
+  schemas:
+    ActorCatalogWithUpdatedAt:
+      description: A source actor catalog with the timestamp it was mostly recently
+        updated
+      type: object
+      properties:
+        updatedAt:
+          type: integer
+          format: int64
+        catalog:
+          type: object
+    DiscoverCatalogResult:
+      type: object
+      required:
+      - catalogId
+      properties:
+        catalogId:
+          type: string
+          format: uuid
+    PartialSourceUpdate:
+      type: object
+      required:
+      - sourceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceAutoPropagateChange:
+      description: Input of the source propagation, it contains the discovered catalog
+        and a list of diff that need to be applied to the existing catalog.
+      type: object
+      required:
+      - catalog
+      - catalogId
+      - sourceId
+      - workspaceId
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        catalogId:
+          type: string
+          format: uuid
+        sourceId:
+          type: string
+          format: uuid
+        workspaceId:
+          type: string
+          format: uuid
+    SourceCloneRequestBody:
+      description: The values required to configure the source. The schema for this
+        should have an id of the existing source along with the configuration you
+        want to change in case.
+      type: object
+      required:
+      - sourceCloneId
+      properties:
+        sourceCloneId:
+          $ref: '#/components/schemas/SourceId'
+        sourceConfiguration:
+          $ref: '#/components/schemas/SourceCloneConfiguration'
+    SourceCreate:
+      type: object
+      required:
+      - workspaceId
+      - name
+      - sourceDefinitionId
+      - connectionConfiguration
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceDiscoverSchemaRequestBody:
+      type: object
+      required:
+      - sourceId
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionId:
+          type: string
+          format: uuid
+        disable_cache:
+          type: boolean
+        notifySchemaChange:
+          type: boolean
+        priority:
+          $ref: '#/components/schemas/WorkloadPriority'
+    SourceDiscoverSchemaWriteRequestBody:
+      description: to write this requested object to database.
+      type: object
+      required:
+      - catalog
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectorVersion:
+          type: string
+        configurationHash:
+          type: string
+    SourceRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - sourceId
+      - workspaceId
+      - connectionConfiguration
+      - name
+      - sourceName
+      - createdAt
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        sourceName:
+          type: string
+        icon:
+          type: string
+        isVersionOverrideApplied:
+          type: boolean
+        isEntitled:
+          type: boolean
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        status:
+          $ref: '#/components/schemas/ActorStatus'
+        createdAt:
+          type: integer
+          format: int64
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    SourceReadList:
+      type: object
+      required:
+      - sources
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceRead'
+    SourceSearch:
+      type: object
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        sourceName:
+          type: string
+    SourceUpdate:
+      type: object
+      required:
+      - sourceId
+      - connectionConfiguration
+      - name
+      properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        connectionConfiguration:
+          $ref: '#/components/schemas/SourceConfiguration'
+        name:
+          type: string
+        secretId:
+          example: airbyte_oauth_workspace_0509f049-d671-48cb-8105-0a23d47e6db6_secret_e0d38206-034e-4d75-9d21-da5a99b02826_v1
+          type: string
+        resourceAllocation:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+  responses: {}

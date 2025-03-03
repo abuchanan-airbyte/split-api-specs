@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: Permissions API
+  version: 1.0.0
+paths:
+  /v1/permissions/create:
+    post:
+      tags:
+      - permission
+      summary: Creates a permission resource
+      operationId: createPermission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionRead'
+        '422':
+          $ref: '#/components/responses/ExceptionResponse'
+  /v1/permissions/get:
+    post:
+      tags:
+      - permission
+      summary: Find a permission by ID
+      operationId: getPermission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/check:
+    post:
+      tags:
+      - permission
+      summary: Check permissions for user
+      operationId: checkPermissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionCheckRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionCheckRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/check_multiple_workspaces:
+    post:
+      tags:
+      - permission
+      summary: Check permissions for user across workspaces
+      operationId: checkPermissionsAcrossMultipleWorkspaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionsCheckMultipleWorkspacesRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionCheckRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/update:
+    post:
+      tags:
+      - permission
+      summary: Updates a permission resource
+      operationId: updatePermission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionUpdate'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/delete:
+    post:
+      tags:
+      - permission
+      summary: Deletes a permission resource
+      operationId: deletePermission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/delete_user_from_workspace:
+    post:
+      tags:
+      - permission
+      summary: Deletes all workspace-level permissions for a particular user and workspace
+      operationId: deleteUserFromWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionDeleteUserFromWorkspaceRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/permissions/list_by_user:
+    post:
+      tags:
+      - permission
+      summary: List permissions a user has access to
+      operationId: listPermissionsByUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionReadList'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    PermissionCheckRead:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - succeeded
+          - failed
+        message:
+          type: string
+    PermissionCheckRequest:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionCreate:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+          description: This is a temporary and optional field just for dual write
+            purpose during the data migration.
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionDeleteUserFromWorkspaceRequestBody:
+      type: object
+      required:
+      - userIdToRemove
+      - workspaceId
+      properties:
+        userIdToRemove:
+          type: string
+          format: uuid
+          description: The user ID for which to remove workspace permissions
+        workspaceId:
+          type: string
+          format: uuid
+          description: The workspace ID from which to remove all workspace-level permissions
+            for the indicated user
+    PermissionIdRequestBody:
+      type: object
+      required:
+      - permissionId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+    PermissionRead:
+      type: object
+      required:
+      - permissionId
+      - permissionType
+      - userId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    PermissionReadList:
+      type: object
+      required:
+      - permissions
+      properties:
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PermissionRead'
+    PermissionUpdate:
+      type: object
+      required:
+      - permissionId
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+    PermissionsCheckMultipleWorkspacesRequest:
+      type: object
+      required:
+      - permissionType
+      - userId
+      properties:
+        permissionType:
+          $ref: '#/components/schemas/PermissionType'
+        userId:
+          $ref: '#/components/schemas/UserId'
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+  responses:
+    ForbiddenResponse:
+      description: Operation forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KnownExceptionInfo'

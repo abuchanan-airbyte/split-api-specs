@@ -1,0 +1,1029 @@
+openapi: 3.0.0
+info:
+  title: Jobs API
+  version: 1.0.0
+paths:
+  /v1/jobs/create:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Creates a new job for a given connection. If a job is already running
+        for the connection, it will be stopped and a new job will be created.
+      operationId: createJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/job_success_with_attempt_number:
+    post:
+      tags:
+      - jobs
+      - attempt
+      - internal
+      summary: For worker to mark an attempt as successful.
+      operationId: jobSuccessWithAttemptNumber
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jobId
+              - attemptNumber
+              - connectionId
+              - standardSyncOutput
+              properties:
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+                attemptNumber:
+                  $ref: '#/components/schemas/AttemptNumber'
+                connectionId:
+                  $ref: '#/components/schemas/ConnectionId'
+                standardSyncOutput:
+                  type: object
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/jobs/list:
+    post:
+      tags:
+      - jobs
+      summary: Returns recent jobs for a connection. Jobs are returned in descending
+        order by createdAt.
+      operationId: listJobsFor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobListRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/list_for_workspaces:
+    post:
+      tags:
+      - jobs
+      summary: Returns recent jobs for a connection. Jobs are returned in descending
+        order by createdAt.
+      operationId: listJobsForWorkspaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobListForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get:
+    post:
+      tags:
+      - jobs
+      summary: Get information about a job
+      operationId: getJobInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_last_replication_job:
+    post:
+      tags:
+      - jobs
+      summary: Get the latest job not including the cancel jobs.
+      operationId: getLastReplicationJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobOptionalRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_last_replication_job_with_cancel:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Get the latest job including the cancel jobs. This is used for scheduling
+        in order to make sure that we don't immediately start a new job after a cancel.
+      operationId: getLastReplicationJobWithCancel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobOptionalRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_without_logs:
+    post:
+      tags:
+      - jobs
+      summary: Get information about a job excluding logs
+      operationId: getJobInfoWithoutLogs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_light:
+    post:
+      tags:
+      - jobs
+      summary: Get information about a job excluding attempt info and logs
+      operationId: getJobInfoLight
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoLightRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/cancel:
+    post:
+      tags:
+      - jobs
+      summary: Cancels a job
+      operationId: cancelJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_debug_info:
+    post:
+      tags:
+      - jobs
+      summary: Gets all information needed to debug this job
+      operationId: getJobDebugInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDebugInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/jobs/get_input:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Get the job input in order to be able to start a synchronization.
+      operationId: getJobInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncInput'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncJobInputRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/jobs/get_check_input:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Get the check job input
+      operationId: getCheckInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckInput'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncJobInputRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/jobs/fail_non_terminal:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Fails all non-terminal jobs for a connection
+      operationId: failNonTerminalJobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+  /v1/jobs/reportJobStart:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: For worker to report when a job starts.
+      operationId: reportJobStart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jobId
+              - connectionId
+              properties:
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+                connectionId:
+                  $ref: '#/components/schemas/ConnectionId'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/jobs/job_failure:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Marks a job as failed
+      operationId: jobFailure
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jobId
+              - attemptNumber
+              - connectionId
+              - reason
+              properties:
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+                attemptNumber:
+                  $ref: '#/components/schemas/AttemptNumber'
+                connectionId:
+                  $ref: '#/components/schemas/ConnectionId'
+                reason:
+                  type: string
+                  description: Reason of the failure
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/jobs/delete_stream_reset_records:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Deletes all stream reset records for the specified job
+      operationId: deleteStreamResetRecordsForJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - connectionId
+              - jobId
+              properties:
+                connectionId:
+                  $ref: '#/components/schemas/ConnectionId'
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+        required: true
+      responses:
+        '204':
+          description: Successfully delete stream reset records for job
+  /v1/attempt/create_new_attempt_number:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: For worker to create a new attempt number.
+      operationId: createNewAttemptNumber
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jobId
+              properties:
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                title: CreateNewAttemptNumberResponse
+                type: object
+                required:
+                - attemptNumber
+                properties:
+                  attemptNumber:
+                    $ref: '#/components/schemas/AttemptNumber'
+  /v1/attempt/save_stream_metadata:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: Save stream level attempt information
+      operationId: saveStreamMetadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveStreamAttemptMetadataRequestBody'
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/attempt/save_stats:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: For worker to set sync stats of a running attempt.
+      operationId: saveStats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveStatsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/attempt/save_sync_config:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: For worker to save the AttemptSyncConfig for an attempt.
+      operationId: saveSyncConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveAttemptSyncConfigRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+  /v1/attempt/fail:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: Fails an attempt with a failure summary and if provided a sync output.
+      operationId: failAttempt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - jobId
+              - attemptNumber
+              properties:
+                jobId:
+                  $ref: '#/components/schemas/JobId'
+                attemptNumber:
+                  $ref: '#/components/schemas/AttemptNumber'
+                failureSummary:
+                  description: Attempt failure summary serialized as a raw object
+                  type: object
+                standardSyncOutput:
+                  description: Sync output serialized as a raw object
+                  type: object
+        required: true
+      responses:
+        '204':
+          description: Successfully failed attempt
+  /v1/attempt/get_combined_stats:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: For retrieving combined stats for a single attempt
+      operationId: getAttemptCombinedStats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetAttemptStatsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptStats'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/attempt/get_for_job:
+    post:
+      tags:
+      - attempt
+      - internal
+      summary: Retrieves an attempt with logs for a job and attempt number.
+      operationId: getAttemptForJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetAttemptStatsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/jobs/retry_states/create_or_update:
+    post:
+      summary: Creates or updates a retry state for a job.
+      tags:
+      - job_retry_states
+      operationId: createOrUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobRetryStateRequestBody'
+      responses:
+        '204':
+          description: Successfully put retry state.
+  /v1/jobs/retry_states/get:
+    post:
+      summary: Gets a retry state.
+      tags:
+      - job_retry_states
+      operationId: get
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobIdRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved retry state for a job.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetryStateRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/jobs/did_previous_job_succeed:
+    post:
+      tags:
+      - jobs
+      - internal
+      summary: Returns whether the job preceding the specified job succeeded
+      operationId: didPreviousJobSucceed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionJobRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooleanRead'
+  /v1/jobs/persist_cancellation:
+    post:
+      summary: Persists the cancellation of a job and kicks off any post processing
+        (e.g notifications).
+      tags:
+      - jobs
+      - internal
+      operationId: persistJobCancellation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersistCancelJobRequestBody'
+      responses:
+        '204':
+          description: Successfully persisted the job cancellation.
+components:
+  schemas:
+    AttemptInfoRead:
+      type: object
+      required:
+      - attempt
+      properties:
+        attempt:
+          $ref: '#/components/schemas/AttemptRead'
+        logType:
+          $ref: '#/components/schemas/LogFormatType'
+        logs:
+          oneOf:
+          - $ref: '#/components/schemas/LogEvents'
+          - $ref: '#/components/schemas/LogRead'
+    AttemptNumber:
+      type: integer
+      format: int32
+    AttemptStats:
+      type: object
+      properties:
+        recordsEmitted:
+          type: integer
+          format: int64
+        bytesEmitted:
+          type: integer
+          format: int64
+        stateMessagesEmitted:
+          type: integer
+          format: int64
+        bytesCommitted:
+          type: integer
+          format: int64
+        recordsCommitted:
+          type: integer
+          format: int64
+        estimatedRecords:
+          type: integer
+          format: int64
+        estimatedBytes:
+          type: integer
+          format: int64
+    BooleanRead:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: boolean
+    CheckInput:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    ConnectionId:
+      type: string
+      format: uuid
+    ConnectionJobRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    GetAttemptStatsRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    JobCreate:
+      type: object
+      required:
+      - connectionId
+      - isScheduled
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        isScheduled:
+          type: boolean
+    JobDebugInfoRead:
+      type: object
+      required:
+      - job
+      - attempts
+      properties:
+        job:
+          $ref: '#/components/schemas/JobDebugRead'
+        attempts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptInfoRead'
+        workflowState:
+          $ref: '#/components/schemas/WorkflowStateRead'
+    JobId:
+      type: integer
+      format: int64
+    JobIdRequestBody:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          $ref: '#/components/schemas/JobId'
+    JobInfoLightRead:
+      type: object
+      required:
+      - job
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    JobListForWorkspacesRequestBody:
+      type: object
+      required:
+      - configTypes
+      properties:
+        configTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobConfigType'
+        configId:
+          type: string
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        statuses:
+          type: array
+          description: The Job statuses you want to filter by
+          items:
+            $ref: '#/components/schemas/JobStatus'
+        createdAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        updatedAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        updatedAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        orderByField:
+          description: The field to order by
+          type: string
+          enum:
+          - createdAt
+          - updatedAt
+        orderByMethod:
+          description: The order by method
+          type: string
+          enum:
+          - ASC
+          - DESC
+    JobListRequestBody:
+      type: object
+      required:
+      - configTypes
+      properties:
+        configTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobConfigType'
+        configId:
+          type: string
+        includingJobId:
+          description: If the job with this ID exists for the specified connection,
+            returns the number of pages of jobs necessary to include this job. Returns
+            an empty list if this job is specified and cannot be found in this connection.
+          $ref: '#/components/schemas/JobId'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        statuses:
+          type: array
+          description: The Job statuses you want to filter by
+          items:
+            $ref: '#/components/schemas/JobStatus'
+        createdAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        updatedAtStart:
+          description: The start datetime to filter by
+          type: string
+          format: date-time
+        updatedAtEnd:
+          description: The end datetime to filter by
+          type: string
+          format: date-time
+        orderByField:
+          description: The field to order by
+          type: string
+          enum:
+          - createdAt
+          - updatedAt
+        orderByMethod:
+          description: The order by method
+          type: string
+          enum:
+          - ASC
+          - DESC
+    JobOptionalRead:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    JobReadList:
+      type: object
+      required:
+      - jobs
+      - totalJobCount
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobWithAttemptsRead'
+        totalJobCount:
+          description: the total count of jobs for the specified connection
+          type: integer
+          format: int64
+    JobRetryStateRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      - successiveCompleteFailures
+      - totalCompleteFailures
+      - successivePartialFailures
+      - totalPartialFailures
+      properties:
+        id:
+          type: string
+          format: uuid
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        successiveCompleteFailures:
+          type: integer
+        totalCompleteFailures:
+          type: integer
+        successivePartialFailures:
+          type: integer
+        totalPartialFailures:
+          type: integer
+    PersistCancelJobRequestBody:
+      type: object
+      required:
+      - attemptFailureSummary
+      - attemptNumber
+      - connectionId
+      - jobId
+      properties:
+        attemptFailureSummary:
+          description: Attempt failure summary serialized as a raw object
+          type: object
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    RetryStateRead:
+      type: object
+      required:
+      - id
+      - jobId
+      - connectionId
+      - successiveCompleteFailures
+      - totalCompleteFailures
+      - successivePartialFailures
+      - totalPartialFailures
+      properties:
+        id:
+          type: string
+          format: uuid
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        successiveCompleteFailures:
+          type: integer
+        totalCompleteFailures:
+          type: integer
+        successivePartialFailures:
+          type: integer
+        totalPartialFailures:
+          type: integer
+    SaveAttemptSyncConfigRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - syncConfig
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        syncConfig:
+          $ref: '#/components/schemas/AttemptSyncConfig'
+    SaveStatsRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - stats
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        stats:
+          $ref: '#/components/schemas/AttemptStats'
+        streamStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttemptStreamStats'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    SaveStreamAttemptMetadataRequestBody:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      - stats
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+        streamMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamAttemptMetadata'
+    SyncInput:
+      type: object
+      required:
+      - jobId
+      - attemptNumber
+      properties:
+        jobId:
+          $ref: '#/components/schemas/JobId'
+        attemptNumber:
+          $ref: '#/components/schemas/AttemptNumber'
+    SyncJobInputRead:
+      description: This return a json blob aimed to be used as a JobInput. It is serialized
+        by the JobInput java class and should be deserialized into it.
+  responses: {}

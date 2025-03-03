@@ -1,0 +1,682 @@
+openapi: 3.0.0
+info:
+  title: Workspaces API
+  version: 1.0.0
+paths:
+  /v1/workspaces/create:
+    post:
+      tags:
+      - workspace
+      summary: Creates a workspace
+      operationId: createWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/create_if_not_exist:
+    post:
+      tags:
+      - workspace
+      - internal
+      summary: Creates a workspace with an explicit workspace ID. This should be use
+        in acceptance tests only.
+      operationId: createWorkspaceIfNotExist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceCreateWithId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/delete:
+    post:
+      tags:
+      - workspace
+      summary: Deletes a workspace
+      operationId: deleteWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/list:
+    post:
+      tags:
+      - workspace
+      summary: List all workspaces registered in the current Airbyte deployment
+      operationId: listWorkspaces
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceReadList'
+  /v1/workspaces/list_all_paginated:
+    post:
+      tags:
+      - workspace
+      summary: List all workspaces registered in the current Airbyte deployment. This
+        function also supports searching by keyword and pagination.
+      operationId: listAllWorkspacesPaginated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListResourcesForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceReadList'
+  /v1/workspaces/list_paginated:
+    post:
+      tags:
+      - workspace
+      summary: List workspaces by given workspace IDs registered in the current Airbyte
+        deployment. This function also supports pagination.
+      operationId: listWorkspacesPaginated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListResourcesForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceReadList'
+  /v1/workspaces/list_by_organization_id:
+    post:
+      summary: List workspaces under the given org id. This function also supports
+        searching by keyword and pagination.
+      tags:
+      - workspace
+      operationId: listWorkspacesInOrganization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListWorkspacesInOrganizationRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved workspaces under the given org id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/workspaces/list_by_user_id:
+    post:
+      summary: List workspaces by a given user id. The function also supports searching
+        by keyword and pagination.
+      tags:
+      - workspace
+      operationId: listWorkspacesByUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListWorkspacesByUserRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved workspaces by given user id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/workspaces/get:
+    post:
+      tags:
+      - workspace
+      summary: Find workspace by ID
+      operationId: getWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/get_by_slug:
+    post:
+      tags:
+      - workspace
+      summary: Find workspace by slug
+      operationId: getWorkspaceBySlug
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlugRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/get_by_connection_id:
+    post:
+      tags:
+      - workspace
+      summary: Find workspace by connection id
+      operationId: getWorkspaceByConnectionId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/get_by_connection_id_with_tombstone:
+    post:
+      tags:
+      - workspace
+      summary: Find workspace by connection id including the tombstone ones
+      operationId: getWorkspaceByConnectionIdWithTombstone
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/get_organization_info:
+    post:
+      tags:
+      - workspace
+      summary: Retrieve a workspace's basic organization info that is accessible for
+        all workspace members, regardless of organization membership.
+      operationId: getOrganizationInfo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceOrganizationInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/update:
+    post:
+      tags:
+      - workspace
+      summary: Update workspace state
+      operationId: updateWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/update_name:
+    post:
+      tags:
+      - workspace
+      summary: Update workspace name
+      operationId: updateWorkspaceName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceUpdateName'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/update_organization:
+    post:
+      tags:
+      - workspace
+      summary: Update workspace organization
+      operationId: updateWorkspaceOrganization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceUpdateOrganization'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/get_usage:
+    post:
+      tags:
+      - workspace
+      - cloud-only
+      summary: Get usage for a workspace
+      operationId: getWorkspaceUsage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceUsageRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUsageRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/workspaces/tag_feedback_status_as_done:
+    post:
+      tags:
+      - workspace
+      summary: Update workspace feedback state
+      operationId: updateWorkspaceFeedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceGiveFeedback'
+        required: true
+      responses:
+        '204':
+          description: The feedback state has been properly updated
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+components:
+  schemas:
+    ListWorkspacesByUserRequestBody:
+      type: object
+      required:
+      - userId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    ListWorkspacesInOrganizationRequestBody:
+      type: object
+      required:
+      - organizationId
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        nameContains:
+          type: string
+    SlugRequestBody:
+      type: object
+      required:
+      - slug
+      properties:
+        slug:
+          type: string
+    WorkspaceCreate:
+      type: object
+      required:
+      - name
+      - organizationId
+      properties:
+        email:
+          type: string
+          format: email
+        anonymousDataCollection:
+          type: boolean
+        name:
+          type: string
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        displaySetupWizard:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceCreateWithId:
+      type: object
+      required:
+      - id
+      - name
+      - organizationId
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        anonymousDataCollection:
+          type: boolean
+        name:
+          type: string
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        displaySetupWizard:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceGiveFeedback:
+      type: object
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    WorkspaceOrganizationInfoRead:
+      type: object
+      description: Limited info about a workspace's organization that is safe to expose
+        to workspace readers who are not members of the org.
+      required:
+      - organizationId
+      - organizationName
+      - sso
+      properties:
+        organizationId:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+        sso:
+          type: boolean
+        billing:
+          type: object
+          required:
+          - paymentStatus
+          properties:
+            subscriptionStatus:
+              type: string
+              enum:
+              - pre_subscription
+              - unsubscribed
+              - subscribed
+            paymentStatus:
+              type: string
+              enum:
+              - uninitialized
+              - okay
+              - grace_period
+              - disabled
+              - locked
+              - manual
+            accountType:
+              type: string
+              enum:
+              - free
+              - internal
+            gracePeriodEndsAt:
+              type: integer
+              format: int64
+    WorkspaceRead:
+      type: object
+      required:
+      - workspaceId
+      - organizationId
+      - customerId
+      - name
+      - slug
+      - initialSetupComplete
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        customerId:
+          $ref: '#/components/schemas/CustomerId'
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        slug:
+          type: string
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        anonymousDataCollection:
+          type: boolean
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        firstCompletedSync:
+          type: boolean
+        feedbackDone:
+          type: boolean
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigRead'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+        tombstone:
+          type: boolean
+        workspaceLimits:
+          $ref: '#/components/schemas/WorkspaceLimits'
+    WorkspaceReadList:
+      type: object
+      required:
+      - workspaces
+      properties:
+        workspaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceRead'
+    WorkspaceUpdate:
+      type: object
+      description: Used to apply a patch-style update to a workspace, which means
+        that null properties remain unchanged
+      required:
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        initialSetupComplete:
+          type: boolean
+        displaySetupWizard:
+          type: boolean
+        anonymousDataCollection:
+          type: boolean
+        news:
+          type: boolean
+        securityUpdates:
+          type: boolean
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        notificationSettings:
+          $ref: '#/components/schemas/NotificationSettings'
+        notificationsConfig:
+          $ref: '#/components/schemas/NotificationsConfig'
+        defaultGeography:
+          $ref: '#/components/schemas/Geography'
+        webhookConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookConfigWrite'
+    WorkspaceUpdateName:
+      type: object
+      required:
+      - workspaceId
+      - name
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        name:
+          type: string
+    WorkspaceUpdateOrganization:
+      type: object
+      required:
+      - workspaceId
+      - organizationId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    WorkspaceUsageRead:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionUsageRead'
+    WorkspaceUsageRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - timeWindow
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        timeWindow:
+          $ref: '#/components/schemas/ConsumptionTimeWindow'
+  responses: {}

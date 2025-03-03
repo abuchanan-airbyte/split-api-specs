@@ -1,0 +1,1356 @@
+openapi: 3.0.0
+info:
+  title: Connections API
+  version: 1.0.0
+paths:
+  /v1/connections/create:
+    post:
+      tags:
+      - connection
+      summary: Create a connection between a source and a destination
+      operationId: createConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionCreate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/update:
+    post:
+      tags:
+      - connection
+      summary: Update a connection
+      description: 'Apply a patch-style update to a connection. Only fields present
+        on the update request body will be updated.
+
+        Note that if a catalog is present in the request body, the connection''s entire
+        catalog will be replaced
+
+        with the catalog from the request. This means that to modify a single stream,
+        the entire new catalog
+
+        containing the updated stream needs to be sent.
+
+        '
+      operationId: updateConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/update_with_reason:
+    post:
+      tags:
+      - connection
+      summary: Update a connection with reason
+      operationId: updateConnectionWithReason
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdateWithReason'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/list:
+    post:
+      tags:
+      - connection
+      summary: Returns all connections for a workspace.
+      description: List connections for workspace. Does not return deleted connections.
+      operationId: listConnectionsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/list_paginated:
+    post:
+      tags:
+      - connection
+      summary: Returns all connections for a workspace. Paginated.
+      description: List connections for workspace. Does not return deleted connections.
+        Paginated.
+      operationId: listConnectionsForWorkspacesPaginated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListConnectionsForWorkspacesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/list_all:
+    post:
+      tags:
+      - connection
+      summary: Returns all connections for a workspace, including deleted connections.
+      description: List connections for workspace, including deleted connections.
+      operationId: listAllConnectionsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/status:
+    post:
+      tags:
+      - connection
+      summary: Get the status of multiple connections
+      operationId: getConnectionStatuses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStatusesRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionStatusesRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/sync_progress:
+    post:
+      tags:
+      - connection
+      summary: Get progress information of the current sync of a connection
+      operationId: getConnectionSyncProgress
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionSyncProgressRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/history/uptime:
+    post:
+      tags:
+      - connection
+      summary: Get the uptime history of a connection
+      operationId: getConnectionUptimeHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUptimeHistoryRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionUptimeHistoryRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/history/data:
+    post:
+      tags:
+      - connection
+      summary: Get the data history of a connection
+      operationId: getConnectionDataHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionDataHistoryRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionUptimeHistoryRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/stream_history:
+    post:
+      tags:
+      - connection
+      summary: Get the history of a connection
+      operationId: getConnectionStreamHistory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStreamHistoryRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionStreamHistoryRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/events/get:
+    post:
+      tags:
+      - connection
+      summary: Get a single event (including details) in a connection by given event
+        ID
+      operationId: getConnectionEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionEventIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionEventWithDetails'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/events/list:
+    post:
+      tags:
+      - connection
+      summary: List most recent events in a connection (optional filters may apply)
+      operationId: listConnectionEvents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionEventsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionEventList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/events/list_minimal:
+    post:
+      tags:
+      - connection
+      summary: List all events in a given time span in a minimal representation
+      operationId: listConnectionEventsMinimal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionEventsListMinimalRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionEventListMinimal'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/events/backfill:
+    post:
+      tags:
+      - connection
+      summary: Backfill events for a connection
+      operationId: backfillConnectionEvents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionEventsBackfillRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/last_job_per_stream:
+    post:
+      tags:
+      - connection
+      summary: Get a summary of the last completed job for each indicated stream in
+        the connection.
+      operationId: getConnectionLastJobPerStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionLastJobPerStreamRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionLastJobPerStreamRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/get:
+    post:
+      tags:
+      - connection
+      summary: Get a connection
+      operationId: getConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/getForJob:
+    post:
+      tags:
+      - connection
+      summary: Get a connection for a given jobId
+      operationId: getConnectionForJob
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionAndJobIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/list_by_actor_definition:
+    post:
+      tags:
+      - connection
+      summary: List all connections that use the provided actor definition
+      operationId: listConnectionsByActorDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/apply_schema_changes:
+    post:
+      tags:
+      - connection
+      summary: Auto propagate the change on a catalog to a catalog saved in the DB
+        for the given connection.
+      operationId: applySchemaChangeForConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionAutoPropagateSchemaChange'
+        required: true
+      responses:
+        '204':
+          description: The schema was properly auto propagated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionAutoPropagateResult'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/postprocess_discovered_catalog:
+    post:
+      tags:
+      - connection
+      summary: Generate the diff between stored catalog for the connection and catalog
+        provided and postprocess as necessary
+      operationId: postprocessDiscoveredCatalogForConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostprocessDiscoveredCatalogRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostprocessDiscoveredCatalogResult'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/get_context:
+    post:
+      tags:
+      - connection
+      summary: Retrieves the domain ids for all objects related to a connection.
+      operationId: getConnectionContext
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionContextRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/search:
+    post:
+      tags:
+      - connection
+      summary: Search connections
+      operationId: searchConnections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionSearch'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionReadList'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/delete:
+    post:
+      tags:
+      - connection
+      summary: Delete a connection
+      operationId: deleteConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/sync:
+    post:
+      tags:
+      - connection
+      summary: Trigger a manual sync of the connection
+      operationId: syncConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/reset:
+    post:
+      tags:
+      - connection
+      summary: Reset the data for the connection. Deletes data generated by the connection
+        in the destination. Resets any cursors back to initial state.
+      operationId: resetConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/clear:
+    post:
+      tags:
+      - connection
+      summary: Clear the data for the connection. Deletes data generated by the connection
+        in the destination. Clear any cursors back to initial state.
+      operationId: clearConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/auto_disable:
+    post:
+      tags:
+      - connection
+      - internal
+      summary: 'Sets connection to inactive if it has met any of the auto-disable
+        conditions (i.e. it hits the max number of consecutive job failures or if
+        it hits the max number of days with only failed jobs). Additionally, notifications
+        will be sent if a connection is disabled or warned if it has reached halfway
+        to disable limits. This endpoint is only able to inactivate connections with
+        more than one non-cancelled job.
+
+        '
+      operationId: autoDisableConnection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalOperationResult'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/connections/clear/stream:
+    post:
+      tags:
+      - connection
+      summary: Clear the data for a specific stream in the connection. Deletes data
+        generated by the stream in the destination. Clear any cursors back to initial
+        state.
+      operationId: clearConnectionStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStreamRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/reset/stream:
+    post:
+      tags:
+      - connection
+      summary: Reset the data for a specific stream in the connection. Deletes data
+        generated by the stream in the destination. Resets any cursors back to initial
+        state.
+      operationId: resetConnectionStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStreamRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobInfoRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/connections/refresh:
+    post:
+      tags:
+      - connection
+      summary: refresh the data for specific streams in the connection. If no stream
+        is specify or the list of stream is empy, all the streams will be refreshed.
+        Resets any cursors back to initial state.
+      operationId: refreshConnectionStream
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionStreamRefreshRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReadResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    ActorDefinitionRequestBody:
+      type: object
+      additionalProperties: false
+      required:
+      - actorDefinitionId
+      - actorType
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+    ConnectionAndJobIdRequestBody:
+      type: object
+      required:
+      - connectionId
+      - jobId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        jobId:
+          $ref: '#/components/schemas/JobId'
+    ConnectionAutoPropagateResult:
+      description: The result of schema propagation for a given connection, with the
+        diff that was applied via auto-propagation.
+      type: object
+      properties:
+        propagatedDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+    ConnectionAutoPropagateSchemaChange:
+      description: Input of the schema propagation, with the catalog to be propagated
+        and the connection to propagate to
+      type: object
+      required:
+      - catalog
+      - catalogId
+      - connectionId
+      - workspaceId
+      properties:
+        catalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        catalogId:
+          type: string
+          format: uuid
+        connectionId:
+          type: string
+          format: uuid
+        workspaceId:
+          type: string
+          format: uuid
+    ConnectionContextRead:
+      description: Ids of related contextual domain models for a connection given
+        connection.
+      type: object
+      properties:
+        connectionId:
+          description: The ID of the relevant connection.
+          type: string
+          format: uuid
+        sourceId:
+          description: The ID of the relevant source.
+          type: string
+          format: uuid
+        destinationId:
+          description: The ID of the relevant destination.
+          type: string
+          format: uuid
+        sourceDefinitionId:
+          description: The ID of the relevant source definition.
+          type: string
+          format: uuid
+        destinationDefinitionId:
+          description: The ID of the relevant destination definition.
+          type: string
+          format: uuid
+        workspaceId:
+          description: The ID of the workspace related to this workflow
+          type: string
+          format: uuid
+        organizationId:
+          description: The ID of the organization related to this workflow
+          type: string
+          format: uuid
+    ConnectionCreate:
+      type: object
+      required:
+      - sourceId
+      - destinationId
+      - status
+      properties:
+        name:
+          type: string
+          description: Optional name of the connection
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionDataHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      - numberOfJobs
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        numberOfJobs:
+          type: integer
+    ConnectionEventIdRequestBody:
+      type: object
+      required:
+      - connectionEventId
+      - connectionId
+      properties:
+        connectionEventId:
+          $ref: '#/components/schemas/ConnectionEventId'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    ConnectionEventList:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEvent'
+    ConnectionEventListMinimal:
+      type: object
+      required:
+      - events
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventMinimal'
+    ConnectionEventWithDetails:
+      type: object
+      required:
+      - id
+      - connectionId
+      - eventType
+      - summary
+      - details
+      - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/ConnectionEventId'
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        eventType:
+          $ref: '#/components/schemas/ConnectionEventType'
+        summary:
+          description: JSON object without event details
+          type: object
+        details:
+          description: JSON object with event details
+          type: object
+        createdAt:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/UserReadInConnectionEvent'
+    ConnectionEventsBackfillRequestBody:
+      type: object
+      required:
+      - connectionId
+      - createdAtStart
+      - createdAtEnd
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        createdAtStart:
+          description: The start datetime of a time range to backfill events
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to backfill events
+          type: string
+          format: date-time
+    ConnectionEventsListMinimalRequestBody:
+      type: object
+      required:
+      - connectionIds
+      - eventTypes
+      - createdAtStart
+      - createdAtEnd
+      properties:
+        connectionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionId'
+        eventTypes:
+          description: filter events by event types
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventType'
+        createdAtStart:
+          description: The start datetime of a time range to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to filter by
+          type: string
+          format: date-time
+    ConnectionEventsRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        eventTypes:
+          description: filter events by event types (optional)
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionEventType'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        createdAtStart:
+          description: The start datetime of a time range to filter by
+          type: string
+          format: date-time
+        createdAtEnd:
+          description: The end datetime of a time range to filter by
+          type: string
+          format: date-time
+    ConnectionLastJobPerStreamRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionLastJobPerStreamReadItem'
+    ConnectionLastJobPerStreamRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+    ConnectionRead:
+      type: object
+      required:
+      - connectionId
+      - name
+      - sourceId
+      - destinationId
+      - syncCatalog
+      - status
+      - breakingChange
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        operationIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        breakingChange:
+          type: boolean
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        created_at:
+          type: integer
+          format: int64
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionReadList:
+      type: object
+      required:
+      - connections
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionRead'
+    ConnectionSearch:
+      type: object
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        name:
+          type: string
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        source:
+          $ref: '#/components/schemas/SourceSearch'
+        destination:
+          $ref: '#/components/schemas/DestinationSearch'
+    ConnectionStatusesRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionStatusRead'
+    ConnectionStatusesRequestBody:
+      type: object
+      required:
+      - connectionIds
+      properties:
+        connectionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionId'
+    ConnectionStreamHistoryRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/ConnectionStreamHistoryReadItem'
+    ConnectionStreamHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      - timezone
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        timezone:
+          type: string
+    ConnectionStreamRefreshRequestBody:
+      type: object
+      required:
+      - connectionId
+      - refreshMode
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        refreshMode:
+          $ref: '#/components/schemas/RefreshMode'
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionStream'
+    ConnectionStreamRequestBody:
+      type: object
+      required:
+      - connectionId
+      - streams
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionStream'
+    ConnectionSyncProgressRead:
+      type: object
+      required:
+      - connectionId
+      - streams
+      - configType
+      properties:
+        connectionId:
+          type: string
+          format: uuid
+        jobId:
+          type: integer
+          format: int64
+        streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/StreamSyncProgressReadItem'
+        recordsEmitted:
+          type: integer
+          format: int64
+        recordsCommitted:
+          type: integer
+          format: int64
+        bytesEmitted:
+          type: integer
+          format: int64
+        bytesCommitted:
+          type: integer
+          format: int64
+        syncStartedAt:
+          type: integer
+          format: int64
+        configType:
+          $ref: '#/components/schemas/JobConfigType'
+    ConnectionUpdate:
+      type: object
+      description: Used to apply a patch-style update to a connection, which means
+        that null properties remain unchanged
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        namespaceDefinition:
+          $ref: '#/components/schemas/NamespaceDefinitionType'
+        namespaceFormat:
+          type: string
+          description: Used when namespaceDefinition is 'customformat'. If blank then
+            behaves like namespaceDefinition = 'destination'. If "${SOURCE_NAMESPACE}"
+            then behaves like namespaceDefinition = 'source'.
+          default: null
+          example: ${SOURCE_NAMESPACE}
+        name:
+          type: string
+          description: Name that will be set to this connection
+        prefix:
+          type: string
+          description: Prefix that will be prepended to the name of each stream when
+            it is written to the destination.
+        operationIds:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OperationId'
+        syncCatalog:
+          $ref: '#/components/schemas/AirbyteCatalog'
+        schedule:
+          $ref: '#/components/schemas/ConnectionSchedule'
+        scheduleType:
+          $ref: '#/components/schemas/ConnectionScheduleType'
+        scheduleData:
+          $ref: '#/components/schemas/ConnectionScheduleData'
+        status:
+          $ref: '#/components/schemas/ConnectionStatus'
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        sourceCatalogId:
+          type: string
+          format: uuid
+        geography:
+          $ref: '#/components/schemas/Geography'
+        notifySchemaChanges:
+          type: boolean
+        notifySchemaChangesByEmail:
+          type: boolean
+        nonBreakingChangesPreference:
+          $ref: '#/components/schemas/NonBreakingChangesPreference'
+        backfillPreference:
+          $ref: '#/components/schemas/SchemaChangeBackfillPreference'
+        breakingChange:
+          type: boolean
+        tags:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Tag'
+    ConnectionUpdateWithReason:
+      type: object
+      required:
+      - connectionUpdate
+      properties:
+        connectionUpdate:
+          $ref: '#/components/schemas/ConnectionUpdate'
+        updateReason:
+          type: string
+        autoUpdate:
+          type: boolean
+          default: false
+    ConnectionUptimeHistoryRead:
+      type: array
+      items:
+        $ref: '#/components/schemas/JobSyncResultRead'
+    ConnectionUptimeHistoryRequestBody:
+      type: object
+      required:
+      - connectionId
+      properties:
+        connectionId:
+          $ref: '#/components/schemas/ConnectionId'
+        numberOfJobs:
+          type: integer
+    JobReadResponse:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobRead'
+    ListConnectionsForWorkspacesRequestBody:
+      type: object
+      required:
+      - workspaceIds
+      - userId
+      properties:
+        workspaceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceId'
+        userId:
+          type: string
+          format: uuid
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        includeDeleted:
+          type: boolean
+          default: false
+        tagIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagId'
+    PostprocessDiscoveredCatalogRequestBody:
+      type: object
+      required:
+      - catalogId
+      - connectionId
+      properties:
+        catalogId:
+          type: string
+          format: uuid
+        connectionId:
+          type: string
+          format: uuid
+    PostprocessDiscoveredCatalogResult:
+      type: object
+      properties:
+        appliedDiff:
+          $ref: '#/components/schemas/CatalogDiff'
+  responses: {}

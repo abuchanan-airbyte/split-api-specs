@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Applications API
+  version: 1.0.0
+paths:
+  /v1/applications/list:
+    post:
+      tags:
+      - applications
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationReadList'
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+      operationId: listApplications
+      summary: Returns all Applications for a User.
+      description: List Applications for a User.
+  /v1/applications/delete:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationIdRequestBody'
+        required: true
+      tags:
+      - applications
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+      operationId: deleteApplication
+      summary: Deletes an Application.
+      description: Deletes an Application.
+  /v1/applications/create:
+    post:
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationRead'
+          description: Successful operation
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+      operationId: createApplication
+      summary: Creates a new Application.
+      description: Creates a new Application.
+  /v1/applications/token:
+    post:
+      tags:
+      - applications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationTokenRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+          description: Successful operation
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+      operationId: applicationTokenRequest
+      summary: Grant an Access Token for an Application.
+      description: Takes the client_id and client_secret for an application and returns
+        an Access Token.
+components:
+  schemas:
+    AccessToken:
+      required:
+      - access_token
+      type: object
+      properties:
+        access_token:
+          type: string
+    ApplicationIdRequestBody:
+      type: object
+      required:
+      - applicationId
+      properties:
+        applicationId:
+          $ref: '#/components/schemas/ApplicationId'
+        includeTombstone:
+          type: boolean
+    ApplicationTokenRequest:
+      required:
+      - client_id
+      - client_secret
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+  responses: {}

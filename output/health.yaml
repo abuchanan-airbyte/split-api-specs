@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Health API
+  version: 1.0.0
+paths:
+  /v1/health:
+    get:
+      tags:
+      - health
+      summary: Health Check
+      operationId: getHealthCheck
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckRead'
+      security: []
+components:
+  schemas:
+    HealthCheckRead:
+      type: object
+      required:
+      - available
+      properties:
+        available:
+          type: boolean
+  responses: {}

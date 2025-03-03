@@ -1,0 +1,298 @@
+openapi: 3.0.0
+info:
+  title: Oauths API
+  version: 1.0.0
+paths:
+  /v1/source_oauths/oauth_params/create:
+    post:
+      tags:
+      - source_oauth
+      summary: 'Sets instancewide variables to be used for the oauth flow when creating
+        this source. When set, these variables will be injected into a connector''s
+        configuration before any interaction with the connector image itself. This
+        enables running oauth flows with consistent variables e.g: the company''s
+        Google Ads developer_token, client_id, and client_secret without the user
+        having to know about these variables.
+
+        '
+      operationId: setInstancewideSourceOauthParams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetInstancewideSourceOauthParamsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful
+        '400':
+          $ref: '#/components/responses/ExceptionResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/source_oauths/get_consent_url:
+    post:
+      tags:
+      - source_oauth
+      summary: Given a source connector definition ID, return the URL to the consent
+        screen where to redirect the user to.
+      operationId: getSourceOAuthConsent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceOauthConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthConsentRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_oauths/complete_oauth:
+    post:
+      tags:
+      - source_oauth
+      summary: Given a source def ID generate an access/refresh token etc.
+      operationId: completeSourceOAuth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteSourceOauthRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteOAuthResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_oauths/revoke:
+    post:
+      tags:
+      - source_oauth
+      summary: Given a source definition ID and workspace ID revoke access/refresh
+        token etc.
+      operationId: revokeSourceOAuthTokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeSourceOauthTokensRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          $ref: '#/components/responses/ExceptionResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/destination_oauths/get_consent_url:
+    post:
+      tags:
+      - destination_oauth
+      summary: Given a destination connector definition ID, return the URL to the
+        consent screen where to redirect the user to.
+      operationId: getDestinationOAuthConsent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationOauthConsentRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthConsentRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_oauths/complete_oauth:
+    post:
+      tags:
+      - destination_oauth
+      summary: Given a destination def ID generate an access/refresh token etc.
+      operationId: completeDestinationOAuth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteDestinationOAuthRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteOAuthResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_oauths/oauth_params/create:
+    post:
+      tags:
+      - destination_oauth
+      summary: 'Sets instancewide variables to be used for the oauth flow when creating
+        this destination. When set, these variables will be injected into a connector''s
+        configuration before any interaction with the connector image itself. This
+        enables running oauth flows with consistent variables e.g: the company''s
+        Google Ads developer_token, client_id, and client_secret without the user
+        having to know about these variables.
+
+        '
+      operationId: setInstancewideDestinationOauthParams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetInstancewideDestinationOauthParamsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful
+        '400':
+          $ref: '#/components/responses/ExceptionResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+components:
+  schemas:
+    CompleteDestinationOAuthRequest:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+    CompleteSourceOauthRequest:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: When completing OAuth flow to gain an access token, some API
+            sometimes requires to verify that the app re-send the redirectUrl that
+            was used when consent was given.
+          type: string
+        queryParams:
+          description: The query parameters present in the redirect URL after a user
+            granted consent e.g auth code
+          type: object
+          additionalProperties: true
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        returnSecretCoordinate:
+          type: boolean
+          description: If set to true, returns a secret coordinate which references
+            the stored tokens. By default, returns raw tokens.
+          default: false
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+    DestinationOauthConsentRequest:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      - redirectUrl
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        destinationId:
+          $ref: '#/components/schemas/DestinationId'
+    RevokeSourceOauthTokensRequest:
+      type: object
+      required:
+      - sourceId
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    SetInstancewideDestinationOauthParamsRequestBody:
+      type: object
+      required:
+      - destinationDefinitionId
+      - params
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        params:
+          type: object
+          additionalProperties: true
+    SetInstancewideSourceOauthParamsRequestBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      - params
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        params:
+          type: object
+          additionalProperties: true
+    SourceOauthConsentRequest:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      - redirectUrl
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        redirectUrl:
+          description: The url to redirect to after getting the user consent
+          type: string
+        oAuthInputConfiguration:
+          $ref: '#/components/schemas/OAuthInputConfiguration'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
+  responses: {}

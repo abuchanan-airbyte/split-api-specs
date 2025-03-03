@@ -1,0 +1,1218 @@
+openapi: 3.0.0
+info:
+  title: Definitions API
+  version: 1.0.0
+paths:
+  /v1/source_definitions/update:
+    post:
+      tags:
+      - source_definition
+      summary: Update a sourceDefinition
+      operationId: updateSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDefinitionUpdate'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/list:
+    post:
+      tags:
+      - source_definition
+      summary: List all the sourceDefinitions the current Airbyte deployment is configured
+        to use
+      operationId: listSourceDefinitions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionReadList'
+  /v1/source_definitions/list_latest:
+    post:
+      tags:
+      - source_definition
+      summary: List the latest sourceDefinitions Airbyte supports
+      description: Guaranteed to retrieve the latest information on supported sources.
+      operationId: listLatestSourceDefinitions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionReadList'
+  /v1/source_definitions/get:
+    post:
+      tags:
+      - source_definition
+      summary: Get source
+      operationId: getSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDefinitionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/delete:
+    post:
+      tags:
+      - source_definition
+      summary: Delete a source definition
+      operationId: deleteSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDefinitionIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/list_private:
+    post:
+      tags:
+      - source_definition
+      summary: List all private, non-custom sourceDefinitions, and for each indicate
+        whether the given workspace has a grant for using the definition. Used by
+        admins to view and modify a given workspace's grants.
+      operationId: listPrivateSourceDefinitions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateSourceDefinitionReadList'
+  /v1/source_definitions/list_for_workspace:
+    post:
+      tags:
+      - source_definition
+      summary: List all the sourceDefinitions the given workspace is configured to
+        use
+      operationId: listSourceDefinitionsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionReadList'
+  /v1/source_definitions/list_enterprise_source_stubs:
+    post:
+      tags:
+      - source_definition
+      summary: List all enterprise source connector stubs from a specified GCS bucket.
+      operationId: listEnterpriseSourceStubs
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseSourceStubsReadList'
+  /v1/source_definitions/list_enterprise_stubs_for_workspace:
+    post:
+      tags:
+      - source_definition
+      summary: List all enterprise source connector stubs for a specified workspace.
+      operationId: listEnterpriseSourceStubsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseSourceStubsReadList'
+  /v1/source_definitions/create_custom:
+    post:
+      tags:
+      - source_definition
+      summary: Creates a custom sourceDefinition for the given workspace or organization
+      operationId: createCustomSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomSourceDefinitionCreate'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/get_for_workspace:
+    post:
+      tags:
+      - source_definition
+      summary: Get a sourceDefinition that is configured for the given workspace
+      operationId: getSourceDefinitionForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDefinitionIdWithWorkspaceId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/get_for_scope:
+    post:
+      tags:
+      - source_definition
+      summary: Get a sourceDefinition that is configured for the given workspace or
+        organization
+      operationId: getSourceDefinitionForScope
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/grant_definition:
+    post:
+      tags:
+      - source_definition
+      summary: grant a private, non-custom sourceDefinition to a given workspace or
+        organization
+      operationId: grantSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateSourceDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definitions/revoke_definition:
+    post:
+      tags:
+      - source_definition
+      summary: revoke a grant to a private, non-custom sourceDefinition from a given
+        workspace or organization
+      operationId: revokeSourceDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/actor_definition_versions/get_for_source:
+    post:
+      tags:
+      - actor_definition_version
+      summary: Get actor definition version for a source.
+      operationId: getActorDefinitionVersionForSourceId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/source_definition_specifications/get:
+    post:
+      tags:
+      - source_definition_specification
+      summary: Get specification for a SourceDefinition.
+      operationId: getSourceDefinitionSpecification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceDefinitionIdWithWorkspaceId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionSpecificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/source_definition_specifications/get_for_source:
+    post:
+      tags:
+      - source_definition_specification
+      summary: Get specification for a source.
+      operationId: getSpecificationForSourceId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceDefinitionSpecificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/actor_definition_versions/resolve:
+    post:
+      tags:
+      - actor_definition_version
+      summary: Resolve an actor definition version by version tag.
+      operationId: resolveActorDefinitionVersionByTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveActorDefinitionVersionRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolveActorDefinitionVersionResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/actor_definition_versions/get_default:
+    post:
+      tags:
+      - actor_definition_version
+      summary: Get the default actor definition version for the actor.
+      operationId: getActorDefinitionVersionDefault
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetActorDefinitionVersionDefaultRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/declarative_source_definitions/create_manifest:
+    post:
+      tags:
+      - declarative_source_definitions
+      summary: Create a declarative manifest to be used by the specified source definition
+      operationId: createDeclarativeSourceDefinitionManifest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclarativeSourceDefinitionCreateManifestRequestBody'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Definition is not declarative source
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '409':
+          description: Version already exists for definition id
+  /v1/declarative_source_definitions/update_active_manifest:
+    post:
+      tags:
+      - declarative_source_definitions
+      summary: Update the declarative manifest version for a source
+      operationId: updateDeclarativeManifestVersion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateActiveManifestRequestBody'
+        required: true
+      responses:
+        '204':
+          description: Successful operation
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/declarative_source_definitions/list_manifests:
+    post:
+      tags:
+      - declarative_source_definitions
+      summary: List all available declarative manifest versions of a declarative source
+        definition
+      operationId: listDeclarativeManifests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListDeclarativeManifestsRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeclarativeManifestsReadList'
+        '400':
+          description: Definition is not declarative source
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/destination_definitions/update:
+    post:
+      tags:
+      - destination_definition
+      summary: Update destinationDefinition
+      operationId: updateDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationDefinitionUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/list:
+    post:
+      tags:
+      - destination_definition
+      summary: List all the destinationDefinitions the current Airbyte deployment
+        is configured to use
+      operationId: listDestinationDefinitions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionReadList'
+  /v1/destination_definitions/list_latest:
+    post:
+      tags:
+      - destination_definition
+      summary: List the latest destinationDefinitions Airbyte supports
+      description: Guaranteed to retrieve the latest information on supported destinations.
+      operationId: listLatestDestinationDefinitions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionReadList'
+  /v1/destination_definitions/get:
+    post:
+      tags:
+      - destination_definition
+      summary: Get destinationDefinition
+      operationId: getDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationDefinitionIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/delete:
+    post:
+      tags:
+      - destination_definition
+      summary: Delete a destination definition
+      operationId: deleteDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationDefinitionIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/list_private:
+    post:
+      tags:
+      - destination_definition
+      summary: List all private, non-custom destinationDefinitions, and for each indicate
+        whether the given workspace has a grant for using the definition. Used by
+        admins to view and modify a given workspace's grants.
+      operationId: listPrivateDestinationDefinitions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateDestinationDefinitionReadList'
+  /v1/destination_definitions/list_for_workspace:
+    post:
+      tags:
+      - destination_definition
+      summary: List all the destinationDefinitions the given workspace is configured
+        to use
+      operationId: listDestinationDefinitionsForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionReadList'
+  /v1/destination_definitions/create_custom:
+    post:
+      tags:
+      - destination_definition
+      summary: Creates a custom destinationDefinition for the given workspace
+      operationId: createCustomDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDestinationDefinitionCreate'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionRead'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/get_for_workspace:
+    post:
+      tags:
+      - destination_definition
+      summary: Get a destinationDefinition that is configured for the given workspace
+      operationId: getDestinationDefinitionForWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationDefinitionIdWithWorkspaceId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/get_for_scope:
+    post:
+      tags:
+      - destination_definition
+      summary: Get a destinationDefinition that is configured for the given scope
+      operationId: getDestinationDefinitionForScope
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/grant_definition:
+    post:
+      tags:
+      - destination_definition
+      summary: grant a private, non-custom destinationDefinition to a given workspace
+        or organization
+      operationId: grantDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateDestinationDefinitionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definitions/revoke_definition:
+    post:
+      tags:
+      - destination_definition
+      summary: revoke a grant to a private, non-custom destinationDefinition from
+        a given workspace or organization
+      operationId: revokeDestinationDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDefinitionIdWithScope'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/actor_definition_versions/get_for_destination:
+    post:
+      tags:
+      - actor_definition_version
+      summary: Get actor definition version for a destination.
+      operationId: getActorDefinitionVersionForDestinationId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorDefinitionVersionRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/destination_definition_specifications/get:
+    post:
+      tags:
+      - destination_definition_specification
+      summary: Get specification for a destinationDefinition
+      operationId: getDestinationDefinitionSpecification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationDefinitionIdWithWorkspaceId'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionSpecificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/destination_definition_specifications/get_for_destination:
+    post:
+      tags:
+      - destination_definition_specification
+      summary: Get specification for a destination
+      operationId: getSpecificationForDestinationId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinationIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DestinationDefinitionSpecificationRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+components:
+  schemas:
+    ActorDefinitionIdWithScope:
+      type: object
+      required:
+      - actorDefinitionId
+      - scopeId
+      - scopeType
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+    ActorDefinitionVersionRead:
+      type: object
+      required:
+      - dockerRepository
+      - dockerImageTag
+      - supportsRefreshes
+      - supportState
+      - isVersionOverrideApplied
+      - supportsFileTransfer
+      properties:
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        supportsRefreshes:
+          type: boolean
+        isVersionOverrideApplied:
+          type: boolean
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        supportState:
+          $ref: '#/components/schemas/SupportState'
+        breakingChanges:
+          $ref: '#/components/schemas/ActorDefinitionVersionBreakingChanges'
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        supportsFileTransfer:
+          type: boolean
+    CustomDestinationDefinitionCreate:
+      type: object
+      required:
+      - destinationDefinition
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        destinationDefinition:
+          $ref: '#/components/schemas/DestinationDefinitionCreate'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+    CustomSourceDefinitionCreate:
+      type: object
+      required:
+      - sourceDefinition
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        scopeId:
+          $ref: '#/components/schemas/ScopeId'
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        sourceDefinition:
+          $ref: '#/components/schemas/SourceDefinitionCreate'
+    DeclarativeManifestsReadList:
+      type: object
+      required:
+      - manifestVersions
+      properties:
+        manifestVersions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeclarativeManifestVersionRead'
+    DeclarativeSourceDefinitionCreateManifestRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      - setAsActiveManifest
+      - declarativeManifest
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        setAsActiveManifest:
+          type: boolean
+        declarativeManifest:
+          $ref: '#/components/schemas/DeclarativeSourceManifest'
+        componentsFileContent:
+          type: string
+    DestinationDefinitionIdRequestBody:
+      type: object
+      required:
+      - destinationDefinitionId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+    DestinationDefinitionIdWithWorkspaceId:
+      type: object
+      required:
+      - destinationDefinitionId
+      - workspaceId
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    DestinationDefinitionRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - name
+      - dockerRepository
+      - dockerImageTag
+      - documentationUrl
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        name:
+          type: string
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        documentationUrl:
+          type: string
+          format: uri
+        icon:
+          type: string
+        protocolVersion:
+          description: The Airbyte Protocol version supported by the connector
+          type: string
+        custom:
+          description: Whether the connector is custom or not
+          type: boolean
+          default: false
+        enterprise:
+          description: Whether the connector is an enterprise connector
+          type: boolean
+          default: false
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        releaseStage:
+          $ref: '#/components/schemas/ReleaseStage'
+        releaseDate:
+          description: The date when this connector was first released, in yyyy-mm-dd
+            format.
+          type: string
+          format: date
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        metrics:
+          description: Public metrics for the connector
+          type: object
+        language:
+          description: The language the connector is written in
+          type: string
+    DestinationDefinitionReadList:
+      type: object
+      required:
+      - destinationDefinitions
+      properties:
+        destinationDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationDefinitionRead'
+    DestinationDefinitionSpecificationRead:
+      type: object
+      required:
+      - destinationDefinitionId
+      - jobInfo
+      properties:
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        documentationUrl:
+          type: string
+        connectionSpecification:
+          $ref: '#/components/schemas/DestinationDefinitionSpecification'
+        advancedAuth:
+          $ref: '#/components/schemas/AdvancedAuth'
+        advancedAuthGlobalCredentialsAvailable:
+          type: boolean
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+        supportedDestinationSyncModes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DestinationSyncMode'
+    DestinationDefinitionUpdate:
+      type: object
+      required:
+      - destinationDefinitionId
+      - dockerImageag
+      properties:
+        name:
+          type: string
+        destinationDefinitionId:
+          $ref: '#/components/schemas/DestinationDefinitionId'
+        dockerImageTag:
+          type: string
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    EnterpriseSourceStubsReadList:
+      type: object
+      required:
+      - enterpriseSourceStubs
+      properties:
+        enterpriseSourceStubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseSourceStub'
+          description: A list of source stubs fetched from a JSON file.
+    GetActorDefinitionVersionDefaultRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+    ListDeclarativeManifestsRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    PrivateDestinationDefinitionRead:
+      type: object
+      required:
+      - destinationDefinition
+      - granted
+      properties:
+        destinationDefinition:
+          $ref: '#/components/schemas/DestinationDefinitionRead'
+        granted:
+          type: boolean
+    PrivateDestinationDefinitionReadList:
+      type: object
+      required:
+      - destinationDefinitions
+      properties:
+        destinationDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivateDestinationDefinitionRead'
+    PrivateSourceDefinitionRead:
+      type: object
+      required:
+      - sourceDefinition
+      - granted
+      properties:
+        sourceDefinition:
+          $ref: '#/components/schemas/SourceDefinitionRead'
+        granted:
+          type: boolean
+    PrivateSourceDefinitionReadList:
+      type: object
+      required:
+      - sourceDefinitions
+      properties:
+        sourceDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivateSourceDefinitionRead'
+    ResolveActorDefinitionVersionRequestBody:
+      type: object
+      required:
+      - actorDefinitionId
+      - actorType
+      - dockerImageTag
+      properties:
+        actorDefinitionId:
+          $ref: '#/components/schemas/ActorDefinitionId'
+        actorType:
+          $ref: '#/components/schemas/ActorType'
+        dockerImageTag:
+          type: string
+    ResolveActorDefinitionVersionResponse:
+      type: object
+      required:
+      - versionId
+      - dockerRepository
+      - dockerImageTag
+      - supportRefreshes
+      - supportFileTransfer
+      properties:
+        versionId:
+          $ref: '#/components/schemas/ActorDefinitionVersionId'
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        supportRefreshes:
+          type: boolean
+        supportFileTransfer:
+          type: boolean
+    SourceDefinitionIdRequestBody:
+      type: object
+      required:
+      - sourceDefinitionId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+    SourceDefinitionIdWithWorkspaceId:
+      type: object
+      required:
+      - sourceDefinitionId
+      - workspaceId
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+    SourceDefinitionRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - name
+      - dockerRepository
+      - dockerImageTag
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        name:
+          type: string
+        dockerRepository:
+          type: string
+        dockerImageTag:
+          type: string
+        documentationUrl:
+          type: string
+          format: uri
+        icon:
+          type: string
+        protocolVersion:
+          description: The Airbyte Protocol version supported by the connector
+          type: string
+        custom:
+          description: Whether the connector is custom or not
+          type: boolean
+          default: false
+        enterprise:
+          description: Whether the connector is an enterprise connector
+          type: boolean
+          default: false
+        supportLevel:
+          $ref: '#/components/schemas/SupportLevel'
+        releaseStage:
+          $ref: '#/components/schemas/ReleaseStage'
+        releaseDate:
+          description: The date when this connector was first released, in yyyy-mm-dd
+            format.
+          type: string
+          format: date
+          x-field-extra-annotation: '@com.fasterxml.jackson.annotation.JsonFormat(pattern="yyyy-MM-dd")'
+        sourceType:
+          type: string
+          enum:
+          - api
+          - file
+          - database
+          - custom
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+        maxSecondsBetweenMessages:
+          description: Number of seconds allowed between 2 airbyte protocol messages.
+            The source will timeout if this delay is reach
+          type: integer
+          format: int64
+        lastPublished:
+          description: The time the connector was modified in the codebase.
+          $ref: '#/components/schemas/ISO8601DateTime'
+        cdkVersion:
+          description: The version of the CDK that the connector was built with. e.g.
+            python:0.1.0, java:0.1.0
+          type: string
+        metrics:
+          description: Public metrics for the connector
+          type: object
+        language:
+          description: The language the connector is written in
+          type: string
+    SourceDefinitionReadList:
+      type: object
+      required:
+      - sourceDefinitions
+      properties:
+        sourceDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceDefinitionRead'
+    SourceDefinitionSpecificationRead:
+      type: object
+      required:
+      - sourceDefinitionId
+      - jobInfo
+      properties:
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        documentationUrl:
+          type: string
+        connectionSpecification:
+          $ref: '#/components/schemas/SourceDefinitionSpecification'
+        advancedAuth:
+          $ref: '#/components/schemas/AdvancedAuth'
+        advancedAuthGlobalCredentialsAvailable:
+          type: boolean
+        jobInfo:
+          $ref: '#/components/schemas/SynchronousJobRead'
+    SourceDefinitionUpdate:
+      type: object
+      description: Update the SourceDefinition. Currently, the only allowed attribute
+        to update is the default docker image version.
+      required:
+      - sourceDefinitionId
+      - dockerImageTag
+      properties:
+        name:
+          type: string
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        dockerImageTag:
+          type: string
+        resourceRequirements:
+          $ref: '#/components/schemas/ScopedResourceRequirements'
+    UpdateActiveManifestRequestBody:
+      type: object
+      required:
+      - workspaceId
+      - sourceDefinitionId
+      - version
+      properties:
+        workspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        sourceDefinitionId:
+          $ref: '#/components/schemas/SourceDefinitionId'
+        version:
+          $ref: '#/components/schemas/ManifestVersion'
+  responses: {}

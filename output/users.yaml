@@ -1,0 +1,338 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: 1.0.0
+paths:
+  /v1/users/get:
+    post:
+      tags:
+      - user
+      summary: Find Airbyte user by internal user ID
+      operationId: getUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/get_by_auth_id:
+    post:
+      tags:
+      - user
+      summary: Find Airbyte user by auth id
+      operationId: getUserByAuthId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAuthIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/get_by_email:
+    post:
+      tags:
+      - user
+      summary: Find Airbyte user by email
+      operationId: getUserByEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEmailRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/get_or_create_by_auth_id:
+    post:
+      tags:
+      - user
+      summary: Find Airbyte user by auth id. If not existed, will create a user.
+      operationId: getOrCreateUserByAuthId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAuthIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGetOrCreateByAuthIdResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/update:
+    post:
+      tags:
+      - user
+      summary: Update user state
+      operationId: updateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRead'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/delete:
+    post:
+      tags:
+      - user
+      summary: Deletes a user
+      operationId: deleteUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserIdRequestBody'
+        required: true
+      responses:
+        '204':
+          description: The resource was deleted successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/list_by_workspace_id:
+    post:
+      tags:
+      - user
+      summary: List all users in a workspace
+      operationId: listUsersInWorkspace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUserReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/list_access_info_by_workspace_id:
+    post:
+      tags:
+      - user
+      summary: List user access info for a particular workspace.
+      operationId: listAccessInfoByWorkspaceId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceIdRequestBody'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceUserAccessInfoReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '422':
+          $ref: '#/components/responses/InvalidInputResponse'
+  /v1/users/list_by_organization_id:
+    post:
+      summary: List all users with permissions of the given org
+      tags:
+      - user
+      operationId: listUsersInOrganization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationIdRequestBody'
+      responses:
+        '200':
+          description: Successfully retrieved users under the given org id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationUserReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+  /v1/users/list_instance_admin:
+    post:
+      summary: List all users with instance admin permissions. Only instance admin
+        has permission to call this.
+      tags:
+      - user
+      operationId: listInstanceAdminUsers
+      responses:
+        '200':
+          description: List all instance admin users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithPermissionInfoReadList'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+components:
+  schemas:
+    OrganizationUserReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationUserRead'
+    UserAuthIdRequestBody:
+      type: object
+      required:
+      - authUserId
+      properties:
+        authUserId:
+          type: string
+    UserEmailRequestBody:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+    UserGetOrCreateByAuthIdResponse:
+      type: object
+      required:
+      - userRead
+      - authUserId
+      - authProvider
+      properties:
+        userRead:
+          $ref: '#/components/schemas/UserRead'
+        authUserId:
+          description: The userId from the Auth provider
+          type: string
+        authProvider:
+          $ref: '#/components/schemas/AuthProvider'
+        newUserCreated:
+          type: boolean
+          default: false
+    UserRead:
+      type: object
+      required:
+      - userId
+      - email
+      - metadata
+      properties:
+        name:
+          description: Caption name for the user
+          type: string
+        userId:
+          $ref: '#/components/schemas/UserId'
+        defaultWorkspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        companyName:
+          type: string
+        email:
+          type: string
+          format: email
+        news:
+          type: boolean
+        metadata:
+          type: object
+          description: UI metadata required by frontend
+    UserUpdate:
+      type: object
+      required:
+      - userId
+      properties:
+        name:
+          description: Caption name for the user
+          type: string
+        userId:
+          $ref: '#/components/schemas/UserId'
+        defaultWorkspaceId:
+          $ref: '#/components/schemas/WorkspaceId'
+        status:
+          $ref: '#/components/schemas/UserStatus'
+        companyName:
+          type: string
+        news:
+          type: boolean
+        metadata:
+          type: object
+          description: UI metadata used in frontend
+    UserWithPermissionInfoReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserWithPermissionInfoRead'
+    WorkspaceUserAccessInfoReadList:
+      type: object
+      required:
+      - usersWithAccess
+      properties:
+        usersWithAccess:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceUserAccessInfoRead'
+    WorkspaceUserReadList:
+      type: object
+      required:
+      - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceUserRead'
+  responses: {}
